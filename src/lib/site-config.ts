@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Mirissa Kayak Safari Tours",
   description:
-    "Explore mangroves, ocean life, and calm waters with experienced local guides",
+    "Experience the beauty of Sri Lanka's southern coast with our expert-guided kayak tours through mangroves and ocean waters.",
   phone: "+94 77 123 4567",
   email: "info@mirissakayak.com",
   whatsapp: "94771234567",
