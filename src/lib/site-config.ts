@@ -109,3 +109,78 @@ export const tours = [
     ],
   },
 ];
+
+export const galleryImages = [
+  {
+    id: 1,
+    src: "/images/gallery/istockphoto-2253279340-612x612.png",
+    alt: "Kayaking through mangroves",
+    category: "mangroves",
+  },
+  {
+    id: 2,
+    src: "/images/gallery/photo-1657946857561-f42916b66712.png",
+    alt: "Sunset over Mirissa beach",
+    category: "sunset",
+  },
+  {
+    id: 3,
+    src: "/images/gallery/photo-1543946207-39bd91e70ca7.png",
+    alt: "Dolphin spotting from kayak",
+    category: "wildlife",
+  },
+  {
+    id: 4,
+    src: "/images/gallery/photo-1707236606614-fbee3070f156.png",
+    alt: "Group kayaking adventure",
+    category: "tours",
+  },
+  {
+    id: 5,
+    src: "/images/gallery/photo-1545063914-a1a6ec821c88.png",
+    alt: "Sea turtle encounter",
+    category: "wildlife",
+  },
+  {
+    id: 6,
+    src: "/images/gallery/photo-1552055569-af8d19430d55.png",
+    alt: "Sunrise paddle session",
+    category: "sunrise",
+  },
+  {
+    id: 7,
+    src: "/images/gallery/photo-1654561773591-57b9413c45c0.png",
+    alt: "Coastal exploration",
+    category: "tours",
+  },
+  {
+    id: 8,
+    src: "/images/gallery/istockphoto-2253500222-612x612.png",
+    alt: "Mangrove wildlife",
+    category: "mangroves",
+  },
+  {
+    id: 9,
+    src: "/images/gallery/photo-1534353739409-c61daeb03f61.png",
+    alt: "Beach landing spot",
+    category: "tours",
+  },
+  {
+    id: 10,
+    src: "/images/gallery/istockphoto-825319778-612x612.png",
+    alt: "Golden hour kayaking",
+    category: "sunset",
+  },
+  {
+    id: 11,
+    src: "/images/gallery/photo-1456926631375-92c8ce872def.png",
+    alt: "Bird watching",
+    category: "wildlife",
+  },
+  {
+    id: 12,
+    src: "/images/gallery/istockphoto-1181382649-612x612.png",
+    alt: "Crystal clear waters",
+    category: "tours",
+  },
+];
