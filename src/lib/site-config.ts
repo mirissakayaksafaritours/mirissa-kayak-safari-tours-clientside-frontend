@@ -22,3 +22,90 @@ export const siteConfig = {
     { name: "Reviews", href: "/reviews" },
   ],
 };
+
+export const tours = [
+  {
+    id: "mangrove-explorer",
+    name: "Mangrove Explorer",
+    duration: "2 hours",
+    price: "$35",
+    description:
+      "Paddle through serene mangrove forests and discover exotic bird species, monitor lizards, and local wildlife in their natural habitat.",
+    highlights: [
+      "Bird watching",
+      "Wildlife spotting",
+      "Calm waters",
+      "Photo opportunities",
+    ],
+  },
+  {
+    id: "sunrise-paddle",
+    name: "Sunrise Paddle",
+    duration: "1.5 hours",
+    price: "$30",
+    description:
+      "Start your day with a magical sunrise kayaking experience. Watch the sky transform as you glide across calm morning waters.",
+    highlights: [
+      "Stunning sunrise",
+      "Peaceful atmosphere",
+      "Light breakfast included",
+      "Perfect for beginners",
+    ],
+  },
+  {
+    id: "ocean-adventure",
+    name: "Ocean Adventure",
+    duration: "3 hours",
+    price: "$50",
+    description:
+      "Experience the thrill of ocean kayaking along Mirissa's beautiful coastline. Spot dolphins, sea turtles, and explore hidden coves.",
+    highlights: [
+      "Dolphin spotting",
+      "Sea turtle encounters",
+      "Hidden beaches",
+      "Snorkeling stop",
+    ],
+  },
+  {
+    id: "sunset-cruise",
+    name: "Sunset Cruise",
+    duration: "2 hours",
+    price: "$40",
+    description:
+      "End your day in paradise with our popular sunset tour. Paddle along the coast as the sun paints the sky in brilliant colors.",
+    highlights: [
+      "Golden hour views",
+      "Refreshments included",
+      "Romantic experience",
+      "Expert guides",
+    ],
+  },
+  {
+    id: "full-day-expedition",
+    name: "Full Day Expedition",
+    duration: "6 hours",
+    price: "$85",
+    description:
+      "The ultimate kayaking adventure combining mangroves, ocean, and coastal exploration. Includes lunch and multiple stops.",
+    highlights: [
+      "Complete experience",
+      "Lunch included",
+      "Multiple ecosystems",
+      "Small groups only",
+    ],
+  },
+  {
+    id: "private-tour",
+    name: "Private Tour",
+    duration: "Custom",
+    price: "From $75",
+    description:
+      "Design your perfect kayaking experience with our customizable private tours. Ideal for couples, families, or small groups.",
+    highlights: [
+      "Personalized itinerary",
+      "Flexible timing",
+      "Private guide",
+      "Special occasions",
+    ],
+  },
+];
