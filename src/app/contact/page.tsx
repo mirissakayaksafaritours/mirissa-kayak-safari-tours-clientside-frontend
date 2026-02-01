@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { siteConfig } from "@/lib/site-config";
+import { operatingHours } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Contact Us | Mirissa Kayak Safari Tours",
@@ -146,32 +147,40 @@ export default function ContactPage() {
             <h2 className="text-2xl font-bold text-foreground mb-6">
               Operating Hours
             </h2>
+
             <div className="bg-card rounded-lg p-6 space-y-3">
-              <div className="flex justify-between items-center py-2 border-b border-border">
-                <span className="text-card-foreground font-medium">
-                  Daily Tours
-                </span>
-                <span className="text-muted-foreground">5:30 AM - 6:30 PM</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-border">
-                <span className="text-card-foreground font-medium">
-                  Sunrise Tours
-                </span>
-                <span className="text-muted-foreground">Depart 5:30 AM</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-border">
-                <span className="text-card-foreground font-medium">
-                  Sunset Tours
-                </span>
-                <span className="text-muted-foreground">Depart 4:30 PM</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-card-foreground font-medium">
-                  Best Season
-                </span>
-                <span className="text-muted-foreground">November - April</span>
-              </div>
+              {[
+                {
+                  label: "Daily Tours",
+                  value: `${operatingHours.dailyTours.start} - ${operatingHours.dailyTours.end}`,
+                },
+                {
+                  label: "Sunrise Tours",
+                  value: `${operatingHours.sunriseTours.start} - ${operatingHours.sunriseTours.end}`,
+                },
+                {
+                  label: "Sunset Tours",
+                  value: `${operatingHours.sunsetTours.start} - ${operatingHours.sunsetTours.end}`,
+                },
+                {
+                  label: "Best Season",
+                  value: `${operatingHours.bestSeason.from} - ${operatingHours.bestSeason.to}`,
+                },
+              ].map(({ label, value }, i) => (
+                <div
+                  key={label}
+                  className={`flex justify-between items-center py-2 ${
+                    i !== 3 ? "border-b border-border" : ""
+                  }`}
+                >
+                  <span className="text-card-foreground font-medium">
+                    {label}
+                  </span>
+                  <span className="text-muted-foreground">{value}</span>
+                </div>
+              ))}
             </div>
+
             <p className="mt-4 text-sm text-muted-foreground">
               Tours run year-round, weather permitting. We&apos;ll confirm
               conditions when you book.
