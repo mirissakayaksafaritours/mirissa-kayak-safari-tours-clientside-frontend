@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, operatingHours } from "@/lib/site-config";
 
 export function Footer() {
   return (
@@ -84,13 +84,19 @@ export function Footer() {
             <h4 className="text-sm font-semibold uppercase tracking-wider">
               Operating Hours
             </h4>
+
             <ul className="space-y-2 text-sm text-background/70">
-              <li>Daily: 5:30 AM - 6:30 PM</li>
-              <li>Sunrise Tours: 5:30 AM</li>
-              <li>Sunset Tours: 4:30 PM</li>
+              <li>
+                Daily: {operatingHours.dailyTours.start} –{" "}
+                {operatingHours.dailyTours.end}
+              </li>
+              <li>Sunrise Tours: {operatingHours.sunriseTours.start}</li>
+              <li>Sunset Tours: {operatingHours.sunsetTours.start}</li>
             </ul>
+
             <p className="text-xs text-background/50">
-              Tours available year-round. Best conditions November - April.
+              Tours available year-round. Best conditions{" "}
+              {operatingHours.bestSeason.from} – {operatingHours.bestSeason.to}.
             </p>
           </div>
         </div>

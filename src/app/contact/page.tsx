@@ -4,8 +4,7 @@ import { Header } from "@/components/header/header";
 import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { siteConfig } from "@/lib/site-config";
-import { operatingHours } from "@/lib/site-config";
+import { siteConfig, operatingHours } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Contact Us | Mirissa Kayak Safari Tours",
