@@ -23,6 +23,13 @@ export const siteConfig = {
   ],
 };
 
+export const operatingHours = {
+  dailyTours: { start: "5:30 AM", end: "6:30 PM" },
+  sunriseTours: { start: "5:30 AM", end: "7:00 AM" },
+  sunsetTours: { start: "4:30 PM", end: "6:30 PM" },
+  bestSeason: { from: "November", to: "April" },
+};
+
 export const tours = [
   {
     id: "mangrove-explorer",
