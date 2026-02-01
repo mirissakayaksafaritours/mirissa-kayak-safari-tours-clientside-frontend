@@ -30,6 +30,27 @@ export const operatingHours = {
   bestSeason: { from: "November", to: "April" },
 };
 
+export const guides = [
+  {
+    name: "Kasun",
+    role: "Head Guide",
+    years: "10+ years",
+    image: "/images/about/guide-1.png",
+  },
+  {
+    name: "Priya",
+    role: "Senior Guide",
+    years: "8 years",
+    image: "/images/about/guide-2.png",
+  },
+  {
+    name: "Sampath",
+    role: "Guide & Photographer",
+    years: "5 years",
+    image: "/images/about/guide-3.png",
+  },
+];
+
 export const tours = [
   {
     id: "mangrove-explorer",
