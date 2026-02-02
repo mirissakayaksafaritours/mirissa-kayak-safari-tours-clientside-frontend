@@ -1,6 +1,7 @@
 import { Header } from "@/components/header/header";
 import { Footer } from "@/components/footer/footer";
 import { Hero } from "@/components/hero";
+import { FeaturedTours } from "@/components/featured-tours";
 
 export default function Home() {
   return (
@@ -8,8 +9,8 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
+        <FeaturedTours />
         {/* 
-          <FeaturedTours />
           <WhyChooseUs />
           <FAQAccordion />
           <OperatingHours />
