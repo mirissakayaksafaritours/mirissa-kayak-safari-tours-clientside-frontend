@@ -6,6 +6,7 @@ import { WhyChooseUs } from "@/components/why-choose-us";
 import { FAQAccordion } from "@/components/faq-accordion";
 import { OperatingHours } from "@/components/operating-hours";
 import { HomeMapSection } from "@/components/home-map-section";
+import { Reviews } from "@/components/reviews";
 
 export default function Home() {
   return (
@@ -18,9 +19,7 @@ export default function Home() {
         <FAQAccordion />
         <OperatingHours />
         <HomeMapSection />
-        {/* 
-          <Reviews /> 
-          */}
+        <Reviews />
       </main>
       <Footer />
     </>
