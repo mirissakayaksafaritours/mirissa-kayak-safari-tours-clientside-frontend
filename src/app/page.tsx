@@ -2,7 +2,8 @@ import { Header } from "@/components/header/header";
 import { Footer } from "@/components/footer/footer";
 import { Hero } from "@/components/hero";
 import { FeaturedTours } from "@/components/featured-tours";
-import { WhyChooseUs } from "@/components/why-choose-us"
+import { WhyChooseUs } from "@/components/why-choose-us";
+import { FAQAccordion } from "@/components/faq-accordion";
 
 export default function Home() {
   return (
@@ -12,8 +13,8 @@ export default function Home() {
         <Hero />
         <FeaturedTours />
         <WhyChooseUs />
+        <FAQAccordion />
         {/* 
-          <FAQAccordion />
           <OperatingHours />
           <HomeMapSection />
           <Reviews /> 
