@@ -30,6 +30,16 @@ export const operatingHours = {
   bestSeason: { from: "November", to: "April" },
 };
 
+export const weeklySchedule = [
+  { day: "Monday", hours: "5:30 AM – 6:30 PM" },
+  { day: "Tuesday", hours: "5:30 AM – 6:30 PM" },
+  { day: "Wednesday", hours: "5:30 AM – 6:30 PM" },
+  { day: "Thursday", hours: "5:30 AM – 6:30 PM" },
+  { day: "Friday", hours: "5:30 AM – 6:30 PM" },
+  { day: "Saturday", hours: "5:30 AM – 6:30 PM" },
+  { day: "Sunday", hours: "5:30 AM – 6:30 PM" },
+];
+
 export const guides = [
   {
     name: "Kasun",
