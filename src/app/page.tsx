@@ -4,6 +4,7 @@ import { Hero } from "@/components/hero";
 import { FeaturedTours } from "@/components/featured-tours";
 import { WhyChooseUs } from "@/components/why-choose-us";
 import { FAQAccordion } from "@/components/faq-accordion";
+import { OperatingHours } from "@/components/operating-hours";
 
 export default function Home() {
   return (
@@ -14,8 +15,8 @@ export default function Home() {
         <FeaturedTours />
         <WhyChooseUs />
         <FAQAccordion />
+        <OperatingHours />
         {/* 
-          <OperatingHours />
           <HomeMapSection />
           <Reviews /> 
           */}
