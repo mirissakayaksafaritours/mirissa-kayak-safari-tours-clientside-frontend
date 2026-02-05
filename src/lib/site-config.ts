@@ -324,31 +324,3 @@ export const reviews = [
     date: "2023-12-10",
   },
 ];
-
-export const faqs = [
-  {
-    question: "Is kayaking safe for beginners?",
-    answer:
-      "Absolutely! Our tours are designed to be beginner-friendly. All participants receive a comprehensive safety briefing, proper paddling techniques, and are accompanied by experienced guides throughout the journey. We provide high-quality life jackets and stable, easy-to-handle kayaks.",
-  },
-  {
-    question: "Do I need prior experience?",
-    answer:
-      "No prior kayaking experience is required. Our guides will teach you everything you need to know before setting off. We start with calm waters and basic techniques, allowing you to build confidence at your own pace.",
-  },
-  {
-    question: "What should I bring with me?",
-    answer:
-      "We recommend bringing sunscreen, a hat, sunglasses with a strap, a waterproof bag for your phone and valuables, comfortable clothing that can get wet, and water shoes or sandals with straps. We provide all kayaking equipment, life jackets, and drinking water.",
-  },
-  {
-    question: "Are children allowed?",
-    answer:
-      "Yes, children are welcome on most of our tours. We recommend a minimum age of 6 years for mangrove tours and 10 years for ocean adventures. Children under 16 must be accompanied by an adult and will be paired in a tandem kayak with their guardian.",
-  },
-  {
-    question: "What happens if the weather is bad?",
-    answer:
-      "Safety is our top priority. If weather conditions are unfavorable, we will contact you to reschedule your tour at no additional cost. If you prefer, we can offer a full refund. Our guides monitor weather conditions daily and make decisions based on guest safety.",
-  },
-];
