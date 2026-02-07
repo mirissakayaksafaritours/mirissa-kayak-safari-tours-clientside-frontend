@@ -7,7 +7,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Admin CMS Dashboard",
+  title: "Admin Login - CMS Dashboard",
   description: "Content Management System for managing website content",
   icons: {
     icon: [
