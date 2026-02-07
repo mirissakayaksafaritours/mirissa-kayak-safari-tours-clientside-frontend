@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Header } from "@/components/header/header";
 import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/ui/button";
-import { siteConfig, guides } from "@/lib/site-config";
+import { guides } from "@/lib/site-config";
+import { AboutCTAWhatsApp } from "./about-cta";
 
 export const metadata: Metadata = {
   title: "About Us | Mirissa Kayak Safari Tours",
@@ -163,15 +164,7 @@ export default function AboutPage() {
               wait to show you the beauty of Mirissa!
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" variant="secondary" asChild>
-                <a
-                  href={`https://wa.me/${siteConfig.whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Book on WhatsApp
-                </a>
-              </Button>
+              <AboutCTAWhatsApp />
               <Button
                 size="lg"
                 variant="outline"

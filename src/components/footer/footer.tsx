@@ -1,8 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { siteConfig, operatingHours } from "@/lib/site-config";
+import { useSiteSettings } from "@/context/site-settings-context";
 
 export function Footer() {
+  const { settings, loading } = useSiteSettings();
+
+  const phone = settings?.phoneNumber || "";
+  const email = settings?.email || "";
+  const address = settings?.address || "";
+
   return (
     <footer className="bg-foreground text-background">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
@@ -55,26 +64,40 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a
-                  href={`tel:${siteConfig.phone}`}
-                  className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
-                >
-                  <Phone className="h-4 w-4" />
-                  {siteConfig.phone}
-                </a>
+                {loading || !phone ? (
+                  <span className="flex items-center gap-2 text-sm text-background/70">
+                    <Phone className="h-4 w-4" />
+                    Phone
+                  </span>
+                ) : (
+                  <a
+                    href={`tel:${phone.replace(/\s+/g, "")}`}
+                    className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                    {phone}
+                  </a>
+                )}
               </li>
               <li>
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
-                >
-                  <Mail className="h-4 w-4" />
-                  {siteConfig.email}
-                </a>
+                {loading || !email ? (
+                  <span className="flex items-center gap-2 text-sm text-background/70">
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </span>
+                ) : (
+                  <a
+                    href={`mailto:${email}`}
+                    className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
+                  >
+                    <Mail className="h-4 w-4" />
+                    {email}
+                  </a>
+                )}
               </li>
               <li className="flex items-start gap-2 text-sm text-background/70">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                {siteConfig.address}
+                {loading || !address ? "Address" : address}
               </li>
             </ul>
           </div>

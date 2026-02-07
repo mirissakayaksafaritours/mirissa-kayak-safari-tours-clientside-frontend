@@ -1,9 +1,17 @@
+"use client";
+import { useState } from "react";
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/site-config";
+import { useSiteSettings } from "@/context/site-settings-context";
+import { Skeleton } from "./ui/skeleton";
 
 export function HomeMapSection() {
-  const googleMapsUrl = siteConfig.googleMapsUrl;
+  const { settings, loading } = useSiteSettings();
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  const googleMapsLink = settings?.googleMapsLink;
+  const mapEmbed = siteConfig.mapEmbed;
 
   return (
     <section className="py-20 px-4 bg-muted">
@@ -19,18 +27,24 @@ export function HomeMapSection() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2 w-full overflow-hidden rounded-lg border border-border shadow-sm">
-            <iframe
-              src={siteConfig.mapEmbed}
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Mirissa Kayak Safari Tours Location"
-              className="w-full"
-            />
+          <div className="lg:col-span-2 w-full overflow-hidden rounded-lg border border-border shadow-sm relative">
+            {(!mapLoaded || loading || !mapEmbed) && (
+              <Skeleton className="absolute inset-0 h-[400px] w-full" />
+            )}
+            {mapEmbed && (
+              <iframe
+                src={mapEmbed}
+                width="100%"
+                height="400"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Mirissa Kayak Safari Tours Location"
+                className={`w-full ${mapLoaded ? "opacity-100" : "opacity-0"}`}
+                onLoad={() => setMapLoaded(true)}
+              />
+            )}
           </div>
 
           <div className="flex flex-col gap-6 bg-card p-6 rounded-lg border border-border shadow-sm">
@@ -57,15 +71,25 @@ export function HomeMapSection() {
                 We are located near the main beach entrance. Look for our blue
                 kayak sign at the shore.
               </p>
-              <Button asChild className="w-full">
-                <a
-                  href={googleMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Open in Google Maps
-                </a>
+              <Button
+                asChild
+                className="w-full"
+                disabled={loading || !googleMapsLink}
+              >
+                {googleMapsLink ? (
+                  <a
+                    href={googleMapsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Open in Google Maps
+                  </a>
+                ) : (
+                  <span className="flex items-center justify-center w-full">
+                    Loading map…
+                  </span>
+                )}
               </Button>
             </div>
           </div>

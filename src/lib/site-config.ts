@@ -1,20 +1,9 @@
 export const siteConfig = {
   name: "Mirissa Kayak Safari Tours",
   description:
-    "Experience the beauty of Sri Lanka's southern coast with our expert-guided kayak tours through mangroves and ocean waters.",
-  phone: "+94 77 123 4567",
-  email: "info@mirissakayak.com",
-  whatsapp: "94771234567",
-  address: "Mirissa Beach, Matara District, Sri Lanka",
-  googleMapsUrl:
-    "https://www.google.com/maps/search/?api=1&query=Mirissa+Beach+Sri+Lanka",
+    "Explore calm lagoons and hidden waterways with Mirissa Kayak Safari Tours. Easy, scenic kayak adventures for nature lovers of all levels.",
   mapEmbed:
-    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15898.132132132!2d80.4524!3d5.9481!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae139c5c6b4f3c1%3A0x7e8e8e8e8e8e8e8e!2sMirissa%2C%20Sri%20Lanka!5e0!3m2!1sen!2slk!4v1234567890",
-  social: {
-    facebook: "https://facebook.com/mirissakayak",
-    instagram: "https://instagram.com/mirissakayak",
-    tikTok: "https://tiktok.com/@mirissakayak",
-  },
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7936.723776546046!2d80.48120721293247!3d5.944764355428863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae13f0064261fc3%3A0x42ff83db203e95c6!2sMirissa%20Kayak%20Safari%20Tours!5e0!3m2!1sen!2slk!4v1770487681448!5m2!1sen!2slk",
   navigation: [
     { name: "Home", href: "/" },
     { name: "Tours", href: "/tours" },

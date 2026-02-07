@@ -1,8 +1,14 @@
+"use client";
 import { Clock, Sun, MessageCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { siteConfig, weeklySchedule } from "@/lib/site-config";
+import { weeklySchedule } from "@/lib/site-config";
+import { useSiteSettings } from "@/context/site-settings-context";
 
 export function OperatingHours() {
+  const { settings, loading } = useSiteSettings();
+
+  const wa = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
+
   return (
     <section className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -89,12 +95,20 @@ export function OperatingHours() {
                     <p className="text-sm text-muted-foreground text-pretty">
                       Hours may change due to weather conditions. Please confirm
                       your booking via WhatsApp at{" "}
-                      <a
-                        href={`https://wa.me/${siteConfig.whatsapp.replace(/[^0-9]/g, "")}`}
-                        className="text-primary hover:underline font-medium"
-                      >
-                        +{siteConfig.whatsapp}
-                      </a>
+                      {!loading && settings?.whatsappNumber ? (
+                        <a
+                          href={`https://wa.me/${wa}`}
+                          className="text-primary hover:underline font-medium"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          +{settings.whatsappNumber}
+                        </a>
+                      ) : (
+                        <span className="font-medium text-primary">
+                          WhatsApp
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>

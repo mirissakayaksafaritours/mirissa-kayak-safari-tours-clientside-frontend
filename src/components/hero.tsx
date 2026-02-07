@@ -1,8 +1,13 @@
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/lib/site-config";
+import { useSiteSettings } from "@/context/site-settings-context";
 
 export function Hero() {
+  const { settings } = useSiteSettings();
+
+  const waNumber = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -26,13 +31,17 @@ export function Hero() {
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button size="lg" asChild>
-            <a
-              href={`https://wa.me/${siteConfig.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Book on WhatsApp
-            </a>
+            {waNumber ? (
+              <a
+                href={`https://wa.me/${waNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Book on WhatsApp
+              </a>
+            ) : (
+              <span>Book on WhatsApp</span>
+            )}
           </Button>
           <Button
             size="lg"

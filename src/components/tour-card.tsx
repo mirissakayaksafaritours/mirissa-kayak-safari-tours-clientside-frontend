@@ -1,20 +1,39 @@
-import { Clock, Check } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { siteConfig } from "@/lib/site-config"
+"use client";
+import { Clock, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { useSiteSettings } from "@/context/site-settings-context";
 
 interface TourCardProps {
-  name: string
-  duration: string
-  price: string
-  description: string
-  highlights: string[]
-  featured?: boolean
+  name: string;
+  duration: string;
+  price: string;
+  description: string;
+  highlights: string[];
+  featured?: boolean;
 }
 
-export function TourCard({ name, duration, price, description, highlights, featured }: TourCardProps) {
+export function TourCard({
+  name,
+  duration,
+  price,
+  description,
+  highlights,
+  featured,
+}: TourCardProps) {
+  const { settings } = useSiteSettings();
+
+  const waNumber = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
+
   return (
-    <Card className={`flex flex-col h-full ${featured ? "border-primary border-2" : ""}`}>
+    <Card
+      className={`flex flex-col h-full ${featured ? "border-primary border-2" : ""}`}
+    >
       {featured && (
         <div className="bg-primary text-primary-foreground text-xs font-medium text-center py-1">
           Most Popular
@@ -31,10 +50,15 @@ export function TourCard({ name, duration, price, description, highlights, featu
         </div>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
-        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {description}
+        </p>
         <ul className="space-y-2">
           {highlights.map((highlight) => (
-            <li key={highlight} className="flex items-center gap-2 text-sm text-card-foreground">
+            <li
+              key={highlight}
+              className="flex items-center gap-2 text-sm text-card-foreground"
+            >
               <Check className="h-4 w-4 text-secondary shrink-0" />
               {highlight}
             </li>
@@ -43,15 +67,19 @@ export function TourCard({ name, duration, price, description, highlights, featu
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">
-          <a
-            href={`https://wa.me/${siteConfig.whatsapp}?text=Hi! I'm interested in the ${name} tour.`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Book via WhatsApp
-          </a>
+          {waNumber ? (
+            <a
+              href={`https://wa.me/${waNumber}?text=Hi! I'm interested in the ${name} tour.`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Book on WhatsApp
+            </a>
+          ) : (
+            <span>Book on WhatsApp</span>
+          )}
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
