@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
-
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { loginAdmin } from "@/services/auth.service";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -19,16 +18,25 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    setIsLoading(false);
+
+    try {
+      const data = await loginAdmin({ email, password });
+      localStorage.setItem("admin_me", JSON.stringify(data.admin));
+
+      router.replace("/admin");
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message || err?.message || "Login failed";
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-secondary px-4">
       <div className="w-full max-w-md">
-        {/* Login Card */}
         <div className="rounded-lg border border-border bg-card p-8 shadow-xl">
-          {/* Header */}
           <div className="mb-8 text-center">
             <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
               <Lock className="h-6 w-6 text-accent" />
@@ -39,7 +47,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
