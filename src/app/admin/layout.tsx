@@ -1,7 +1,23 @@
-import type { ReactNode } from 'react'
-import { AdminSidebar } from '@/components/admin/admin-sidebar'
-import { AdminTopbar } from '@/components/admin/admin-topbar'
-import { ToastProvider } from '@/components/admin/toast-provider'
+import { Metadata } from "next";
+import type { ReactNode } from "react";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AdminTopbar } from "@/components/admin/admin-topbar";
+import { ToastProvider } from "@/components/admin/toast-provider";
+
+export const metadata: Metadata = {
+  title: "Admin CMS Dashboard",
+  description: "Content Management System for managing website content",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon1.png", type: "image/png" },
+      { url: "/icon0.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-icon.png",
+  },
+
+  manifest: "/manifest.json",
+};
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -14,5 +30,5 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </div>
     </ToastProvider>
-  )
+  );
 }
