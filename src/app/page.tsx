@@ -1,18 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { loginAdmin } from "@/services/auth.service";
+import { Loader } from "@/components/ui/loader";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("admin_token");
+
+    if (token) {
+      router.replace("/admin");
+      return;
+    }
+
+    setLoading(false);
+  }, [router]);
+
+  if (loading) return <Loader />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +36,12 @@ export default function LoginPage() {
 
     try {
       const data = await loginAdmin({ email, password });
+
+      localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_me", JSON.stringify(data.admin));
 
       router.replace("/admin");
+      router.refresh();
     } catch (err: any) {
       const msg =
         err?.response?.data?.message || err?.message || "Login failed";
