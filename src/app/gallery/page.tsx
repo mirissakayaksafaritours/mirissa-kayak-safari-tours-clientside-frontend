@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/header/header";
 import { Footer } from "@/components/footer/footer";
-import { GalleryGrid } from "@/components/gallery-grid";
-import { galleryImages } from "@/lib/site-config";
+import GalleryClient from "./gallery-client";
 
 export const metadata: Metadata = {
   title: "Photo Gallery | Mirissa Kayak Safari Tours",
@@ -28,10 +27,10 @@ export default function GalleryPage() {
           </div>
         </section>
 
-        {/* Gallery Grid */}
+        {/* Client Gallery */}
         <section className="py-16 px-4 bg-background">
           <div className="mx-auto max-w-7xl">
-            <GalleryGrid images={galleryImages} />
+            <GalleryClient />
           </div>
         </section>
       </main>
