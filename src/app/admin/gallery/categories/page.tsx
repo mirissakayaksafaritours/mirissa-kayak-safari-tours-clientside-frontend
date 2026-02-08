@@ -20,14 +20,13 @@ import {
   FormActions,
 } from "@/components/admin/form-layout";
 import { useToast } from "@/components/admin/toast-provider";
-import { getGalleryImagesByCategory } from "@/lib/adminStore";
 import {
   getGalleryCategories,
   createGalleryCategory,
   updateGalleryCategory,
   deleteGalleryCategory,
+  GalleryCategory,
 } from "@/services/galleryCategory.service";
-import type { GalleryCategory } from "@/lib/types";
 
 const initialFormData = {
   name: "",
@@ -84,10 +83,10 @@ export default function GalleryCategoriesPage() {
   const handleDelete = async () => {
     if (!deleteId) return;
 
-    const images = getGalleryImagesByCategory(deleteId);
-    if (images.length > 0) {
+    const cat = categories.find((c) => c.id === deleteId);
+    if (cat?.imageCount) {
       showToast(
-        `This category has ${images.length} images that will also be deleted`,
+        `This category has ${cat.imageCount} images that will also be deleted`,
         "info",
       );
     }
@@ -180,10 +179,11 @@ export default function GalleryCategoriesPage() {
     {
       key: "images",
       header: "Images",
-      render: (category) => {
-        const count = getGalleryImagesByCategory(category.id).length;
-        return <span className="text-muted-foreground">{count} images</span>;
-      },
+      render: (category) => (
+        <span className="text-muted-foreground">
+          {category.imageCount ?? 0} images
+        </span>
+      ),
     },
     {
       key: "actions",

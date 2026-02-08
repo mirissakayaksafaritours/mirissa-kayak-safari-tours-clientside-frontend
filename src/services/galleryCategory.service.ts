@@ -5,6 +5,7 @@ export type GalleryCategory = {
   name: string;
   slug: string;
   order: number;
+  imageCount: number;
 };
 
 export type CreateGalleryCategoryPayload = {
@@ -24,6 +25,7 @@ const mapCategory = (c: any): GalleryCategory => ({
   name: c.name,
   slug: c.slug,
   order: c.order,
+  imageCount: c.imageCount ?? 0,
 });
 
 export async function getGalleryCategories(): Promise<GalleryCategory[]> {
