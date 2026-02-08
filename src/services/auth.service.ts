@@ -1,7 +1,11 @@
 import { api } from "../lib/api";
 
 type LoginPayload = { email: string; password: string };
-type LoginResponse = { ok: true; admin: { id: string; email: string; name: string; role: string } };
+type LoginResponse = {
+  ok: true;
+  token: string;
+  admin: { id: string; email: string; name: string; role: string };
+};
 
 export async function loginAdmin(payload: LoginPayload) {
   const { data } = await api.post<LoginResponse>("/admin/login", payload);
@@ -9,6 +13,6 @@ export async function loginAdmin(payload: LoginPayload) {
 }
 
 export async function logoutAdmin() {
-  const { data } = await api.post("/admin/logout");
-  return data;
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_me");
 }

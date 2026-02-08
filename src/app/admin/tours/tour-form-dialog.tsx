@@ -1,123 +1,143 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { FormSection, FormField, FormGrid, FormActions } from '@/components/admin/form-layout'
-import { ImageUploader } from '@/components/admin/image-uploader'
-import { useToast } from '@/components/admin/toast-provider'
-import { createTourPackage, updateTourPackage } from '@/lib/adminStore'
-import type { TourPackage } from '@/lib/types'
-import { X, Plus } from 'lucide-react'
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  FormSection,
+  FormField,
+  FormGrid,
+  FormActions,
+} from "@/components/admin/form-layout";
+import { useToast } from "@/components/admin/toast-provider";
+import {
+  createTourPackage,
+  updateTourPackage,
+  type TourPackage,
+  type TourPackagePayload,
+} from "@/services/tourPackages.service";
+import { X, Plus } from "lucide-react";
 
 interface TourFormDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  tour: TourPackage | null
-  onSuccess: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  tour: TourPackage | null;
+  onSuccess: () => void;
 }
 
 const initialFormData = {
-  title: '',
-  slug: '',
-  shortDescription: '',
-  duration: '',
+  title: "",
+  slug: "",
+  shortDescription: "",
+  duration: "",
   priceLKR: 0,
-  priceUSD: undefined as number | undefined,
   includes: [] as string[],
-  maxPeople: 1,
-  images: [] as string[],
   isFeatured: false,
-}
+};
 
-export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourFormDialogProps) {
-  const { showToast } = useToast()
-  const [formData, setFormData] = useState(initialFormData)
-  const [newInclude, setNewInclude] = useState('')
+export function TourFormDialog({
+  open,
+  onOpenChange,
+  tour,
+  onSuccess,
+}: TourFormDialogProps) {
+  const { showToast } = useToast();
+  const [formData, setFormData] = useState(initialFormData);
+  const [newInclude, setNewInclude] = useState("");
 
   useEffect(() => {
     if (tour) {
       setFormData({
-        title: tour.title,
-        slug: tour.slug,
-        shortDescription: tour.shortDescription,
-        duration: tour.duration,
-        priceLKR: tour.priceLKR,
-        priceUSD: tour.priceUSD,
-        includes: tour.includes,
-        maxPeople: tour.maxPeople,
-        images: tour.images,
-        isFeatured: tour.isFeatured,
-      })
+        title: tour.title ?? "",
+        slug: tour.slug ?? "",
+        shortDescription: tour.shortDescription ?? "",
+        duration: tour.duration ?? "",
+        priceLKR: tour.priceLKR ?? 0,
+        includes: tour.includes ?? [],
+        isFeatured: !!tour.isFeatured,
+      });
     } else {
-      setFormData(initialFormData)
+      setFormData(initialFormData);
     }
-  }, [tour, open])
+  }, [tour, open]);
 
   const handleChange = (field: keyof typeof formData, value: unknown) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
 
   const handleTitleChange = (title: string) => {
-    handleChange('title', title)
+    handleChange("title", title);
     if (!tour) {
-      handleChange('slug', generateSlug(title))
+      handleChange("slug", generateSlug(title));
     }
-  }
+  };
 
   const addInclude = () => {
     if (newInclude.trim()) {
-      handleChange('includes', [...formData.includes, newInclude.trim()])
-      setNewInclude('')
+      handleChange("includes", [...formData.includes, newInclude.trim()]);
+      setNewInclude("");
     }
-  }
+  };
 
   const removeInclude = (index: number) => {
     handleChange(
-      'includes',
-      formData.includes.filter((_, i) => i !== index)
-    )
-  }
+      "includes",
+      formData.includes.filter((_, i) => i !== index),
+    );
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.title || !formData.slug || !formData.priceLKR) {
-      showToast('Please fill in all required fields', 'error')
-      return
+      showToast("Please fill in all required fields", "error");
+      return;
     }
 
-    if (tour) {
-      updateTourPackage(tour.id, formData)
-      showToast('Tour package updated successfully', 'success')
-    } else {
-      createTourPackage(formData)
-      showToast('Tour package created successfully', 'success')
-    }
+    const payload: TourPackagePayload = {
+      title: formData.title,
+      slug: formData.slug || generateSlug(formData.title),
+      shortDescription: formData.shortDescription || "",
+      duration: formData.duration,
+      priceLKR: Number(formData.priceLKR),
+      includes: formData.includes ?? [],
+      isFeatured: !!formData.isFeatured,
+    };
 
-    onSuccess()
-  }
+    try {
+      if (tour) {
+        await updateTourPackage(tour.id, payload);
+        showToast("Tour package updated successfully", "success");
+      } else {
+        await createTourPackage(payload);
+        showToast("Tour package created successfully", "success");
+      }
+      onSuccess();
+    } catch (e: any) {
+      showToast(e?.response?.data?.message || "Save failed", "error");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-foreground">
-            {tour ? 'Edit Tour Package' : 'Create Tour Package'}
+            {tour ? "Edit Tour Package" : "Create Tour Package"}
           </DialogTitle>
         </DialogHeader>
 
@@ -138,7 +158,7 @@ export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourForm
                 <Input
                   id="slug"
                   value={formData.slug}
-                  onChange={(e) => handleChange('slug', e.target.value)}
+                  onChange={(e) => handleChange("slug", e.target.value)}
                   placeholder="sunset-beach-tour"
                   className="bg-input border-border"
                 />
@@ -149,7 +169,9 @@ export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourForm
               <Textarea
                 id="shortDescription"
                 value={formData.shortDescription}
-                onChange={(e) => handleChange('shortDescription', e.target.value)}
+                onChange={(e) =>
+                  handleChange("shortDescription", e.target.value)
+                }
                 placeholder="Experience the most beautiful sunset views..."
                 className="bg-input border-border min-h-[80px]"
               />
@@ -160,48 +182,19 @@ export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourForm
                 <Input
                   id="duration"
                   value={formData.duration}
-                  onChange={(e) => handleChange('duration', e.target.value)}
+                  onChange={(e) => handleChange("duration", e.target.value)}
                   placeholder="2 hours"
                   className="bg-input border-border"
                 />
               </FormField>
-
-              <FormField label="Max People" htmlFor="maxPeople" required>
-                <Input
-                  id="maxPeople"
-                  type="number"
-                  min={1}
-                  value={formData.maxPeople}
-                  onChange={(e) => handleChange('maxPeople', parseInt(e.target.value) || 1)}
-                  className="bg-input border-border"
-                />
-              </FormField>
-            </FormGrid>
-          </FormSection>
-
-          <FormSection title="Pricing">
-            <FormGrid columns={2}>
               <FormField label="Price (LKR)" htmlFor="priceLKR" required>
                 <Input
                   id="priceLKR"
-                  type="number"
                   min={0}
                   value={formData.priceLKR}
-                  onChange={(e) => handleChange('priceLKR', parseInt(e.target.value) || 0)}
-                  className="bg-input border-border"
-                />
-              </FormField>
-
-              <FormField label="Price (USD)" htmlFor="priceUSD">
-                <Input
-                  id="priceUSD"
-                  type="number"
-                  min={0}
-                  value={formData.priceUSD || ''}
                   onChange={(e) =>
-                    handleChange('priceUSD', e.target.value ? parseInt(e.target.value) : undefined)
+                    handleChange("priceLKR", parseInt(e.target.value) || 0)
                   }
-                  placeholder="Optional"
                   className="bg-input border-border"
                 />
               </FormField>
@@ -216,7 +209,9 @@ export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourForm
                   onChange={(e) => setNewInclude(e.target.value)}
                   placeholder="Add an item (e.g., Guide, Refreshments)"
                   className="bg-input border-border"
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addInclude())}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addInclude())
+                  }
                 />
                 <Button type="button" onClick={addInclude} variant="secondary">
                   <Plus className="h-4 w-4" />
@@ -244,20 +239,14 @@ export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourForm
             </div>
           </FormSection>
 
-          <FormSection title="Images">
-            <ImageUploader
-              value={formData.images}
-              onChange={(images) => handleChange('images', images)}
-              multiple
-            />
-          </FormSection>
-
           <FormSection>
             <div className="flex items-center gap-3">
               <Switch
                 id="isFeatured"
                 checked={formData.isFeatured}
-                onCheckedChange={(checked) => handleChange('isFeatured', checked)}
+                onCheckedChange={(checked) =>
+                  handleChange("isFeatured", checked)
+                }
               />
               <Label htmlFor="isFeatured" className="text-foreground">
                 Featured tour (shown prominently on the website)
@@ -277,11 +266,11 @@ export function TourFormDialog({ open, onOpenChange, tour, onSuccess }: TourForm
               onClick={handleSubmit}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              {tour ? 'Update Tour' : 'Create Tour'}
+              {tour ? "Update Tour" : "Create Tour"}
             </Button>
           </FormActions>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -28,7 +28,6 @@ const navItems = [
   { href: "/admin/settings", label: "Site Settings", icon: Settings },
   { href: "/admin/tours", label: "Tour Packages", icon: Map },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
-  { href: "/admin/schedule", label: "Schedule", icon: Clock },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
   {
     href: "/admin/gallery/categories",

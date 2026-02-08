@@ -1,60 +1,69 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Star } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { PageHeader } from '@/components/admin/page-header'
-import { DataTable, type Column } from '@/components/admin/data-table'
-import { ConfirmDialog } from '@/components/admin/confirm-dialog'
-import { useToast } from '@/components/admin/toast-provider'
-import { getTourPackages, deleteTourPackage } from '@/lib/adminStore'
-import type { TourPackage } from '@/lib/types'
-import { TourFormDialog } from './tour-form-dialog'
+import { useState, useEffect } from "react";
+import { Plus, Pencil, Trash2, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/admin/page-header";
+import { DataTable, type Column } from "@/components/admin/data-table";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { useToast } from "@/components/admin/toast-provider";
+import {
+  getTourPackagesAdmin,
+  deleteTourPackage,
+  type TourPackage,
+} from "@/services/tourPackages.service";
+import { TourFormDialog } from "./tour-form-dialog";
 
 export default function ToursPage() {
-  const { showToast } = useToast()
-  const [tours, setTours] = useState<TourPackage[]>([])
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingTour, setEditingTour] = useState<TourPackage | null>(null)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const { showToast } = useToast();
+  const [tours, setTours] = useState<TourPackage[]>([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingTour, setEditingTour] = useState<TourPackage | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
-    setTours(getTourPackages())
-  }, [])
+    refreshTours();
+  }, []);
 
-  const refreshTours = () => {
-    setTours(getTourPackages())
-  }
+  const refreshTours = async () => {
+    const rows = await getTourPackagesAdmin();
+    setTours(rows);
+  };
 
   const handleEdit = (tour: TourPackage) => {
-    setEditingTour(tour)
-    setFormOpen(true)
-  }
+    setEditingTour(tour);
+    setFormOpen(true);
+  };
 
-  const handleDelete = () => {
-    if (deleteId) {
-      deleteTourPackage(deleteId)
-      refreshTours()
-      showToast('Tour package deleted successfully', 'success')
-      setDeleteId(null)
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      await deleteTourPackage(deleteId);
+      await refreshTours();
+      showToast("Tour package deleted successfully", "success");
+    } catch (e: any) {
+      showToast(e?.response?.data?.message || "Delete failed", "error");
+    } finally {
+      setDeleteId(null);
     }
-  }
+  };
 
   const handleFormClose = () => {
-    setFormOpen(false)
-    setEditingTour(null)
-  }
+    setFormOpen(false);
+    setEditingTour(null);
+  };
 
   const handleFormSuccess = () => {
-    refreshTours()
-    handleFormClose()
-  }
+    refreshTours();
+    handleFormClose();
+  };
 
   const columns: Column<TourPackage>[] = [
     {
-      key: 'title',
-      header: 'Title',
+      key: "title",
+      header: "Title",
       sortable: true,
       render: (tour) => (
         <div className="flex items-center gap-2">
@@ -66,13 +75,13 @@ export default function ToursPage() {
       ),
     },
     {
-      key: 'duration',
-      header: 'Duration',
+      key: "duration",
+      header: "Duration",
       sortable: true,
     },
     {
-      key: 'priceLKR',
-      header: 'Price (LKR)',
+      key: "priceLKR",
+      header: "Price (LKR)",
       sortable: true,
       render: (tour) => (
         <span className="text-foreground">
@@ -81,38 +90,33 @@ export default function ToursPage() {
       ),
     },
     {
-      key: 'maxPeople',
-      header: 'Max People',
-      sortable: true,
-    },
-    {
-      key: 'isFeatured',
-      header: 'Status',
+      key: "isFeatured",
+      header: "Status",
       render: (tour) => (
         <Badge
-          variant={tour.isFeatured ? 'default' : 'secondary'}
+          variant={tour.isFeatured ? "default" : "secondary"}
           className={
             tour.isFeatured
-              ? 'bg-accent text-accent-foreground'
-              : 'bg-secondary text-secondary-foreground'
+              ? "bg-accent text-accent-foreground"
+              : "bg-secondary text-secondary-foreground"
           }
         >
-          {tour.isFeatured ? 'Featured' : 'Standard'}
+          {tour.isFeatured ? "Featured" : "Standard"}
         </Badge>
       ),
     },
     {
-      key: 'actions',
-      header: 'Actions',
-      className: 'text-right',
+      key: "actions",
+      header: "Actions",
+      className: "text-right",
       render: (tour) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={(e) => {
-              e.stopPropagation()
-              handleEdit(tour)
+              e.stopPropagation();
+              handleEdit(tour);
             }}
           >
             <Pencil className="h-4 w-4" />
@@ -121,8 +125,8 @@ export default function ToursPage() {
             variant="ghost"
             size="icon"
             onClick={(e) => {
-              e.stopPropagation()
-              setDeleteId(tour.id)
+              e.stopPropagation();
+              setDeleteId(tour.id);
             }}
             className="text-destructive hover:text-destructive"
           >
@@ -131,7 +135,7 @@ export default function ToursPage() {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
@@ -153,7 +157,7 @@ export default function ToursPage() {
         data={tours}
         columns={columns}
         searchable
-        searchKeys={['title', 'shortDescription']}
+        searchKeys={["title", "shortDescription"]}
         emptyMessage="No tour packages found. Create your first tour!"
       />
 
@@ -174,5 +178,5 @@ export default function ToursPage() {
         onConfirm={handleDelete}
       />
     </div>
-  )
+  );
 }

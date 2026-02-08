@@ -1,41 +1,80 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { PageHeader } from '@/components/admin/page-header'
-import { FormSection, FormField, FormGrid, FormActions } from '@/components/admin/form-layout'
-import { useToast } from '@/components/admin/toast-provider'
-import { getSiteSettings, updateSiteSettings } from '@/lib/adminStore'
-import type { SiteSettings } from '@/lib/types'
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/admin/page-header";
+import {
+  FormSection,
+  FormField,
+  FormGrid,
+  FormActions,
+} from "@/components/admin/form-layout";
+import { useToast } from "@/components/admin/toast-provider";
+import {
+  getSiteSettings,
+  SiteSettings,
+  updateSiteSettings,
+} from "@/services/settings.service";
+import { Loader } from "@/components/ui/loader";
 
 export default function SettingsPage() {
-  const { showToast } = useToast()
-  const [settings, setSettings] = useState<SiteSettings>(getSiteSettings())
+  const { showToast } = useToast();
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings);
+  }, []);
+
+  if (!settings) {
+    return <Loader />;
+  }
 
   const handleChange = (field: keyof SiteSettings | string, value: string) => {
-    if (field.startsWith('socialLinks.')) {
-      const socialField = field.split('.')[1] as keyof SiteSettings['socialLinks']
-      setSettings((prev) => ({
-        ...prev,
-        socialLinks: {
-          ...prev.socialLinks,
-          [socialField]: value,
-        },
-      }))
-    } else {
-      setSettings((prev) => ({
-        ...prev,
-        [field]: value,
-      }))
-    }
-  }
+    setSettings((prev) => {
+      if (!prev) return prev;
 
-  const handleSave = () => {
-    updateSiteSettings(settings)
-    showToast('Settings saved successfully', 'success')
-  }
+      if (field.startsWith("socialLinks.")) {
+        const socialField = field.split(
+          ".",
+        )[1] as keyof SiteSettings["socialLinks"];
+        return {
+          ...prev,
+          socialLinks: {
+            ...(prev.socialLinks ?? {}),
+            [socialField]: value,
+          },
+        };
+      }
+
+      return {
+        ...prev,
+        [field as keyof SiteSettings]: value,
+      };
+    });
+  };
+
+  const handleSave = async () => {
+    if (!settings) return;
+
+    const payload = {
+      phoneNumber: settings.phoneNumber,
+      whatsappNumber: settings.whatsappNumber,
+      email: settings.email,
+      address: settings.address,
+      googleMapsLink: settings.googleMapsLink,
+      socialLinks: settings.socialLinks ?? {},
+    };
+
+    try {
+      const updated = await updateSiteSettings(payload);
+      setSettings(updated);
+      showToast("Settings saved successfully", "success");
+    } catch (e: any) {
+      showToast(e?.response?.data?.message || "Save failed", "error");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -55,17 +94,23 @@ export default function SettingsPage() {
                 <Input
                   id="phoneNumber"
                   value={settings.phoneNumber}
-                  onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                  onChange={(e) => handleChange("phoneNumber", e.target.value)}
                   placeholder="+94 77 123 4567"
                   className="bg-input border-border"
                 />
               </FormField>
 
-              <FormField label="WhatsApp Number" htmlFor="whatsappNumber" required>
+              <FormField
+                label="WhatsApp Number"
+                htmlFor="whatsappNumber"
+                required
+              >
                 <Input
                   id="whatsappNumber"
                   value={settings.whatsappNumber}
-                  onChange={(e) => handleChange('whatsappNumber', e.target.value)}
+                  onChange={(e) =>
+                    handleChange("whatsappNumber", e.target.value)
+                  }
                   placeholder="+94 77 123 4567"
                   className="bg-input border-border"
                 />
@@ -76,7 +121,7 @@ export default function SettingsPage() {
                   id="email"
                   type="email"
                   value={settings.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
+                  onChange={(e) => handleChange("email", e.target.value)}
                   placeholder="info@example.com"
                   className="bg-input border-border"
                 />
@@ -86,7 +131,9 @@ export default function SettingsPage() {
                 <Input
                   id="googleMapsLink"
                   value={settings.googleMapsLink}
-                  onChange={(e) => handleChange('googleMapsLink', e.target.value)}
+                  onChange={(e) =>
+                    handleChange("googleMapsLink", e.target.value)
+                  }
                   placeholder="https://maps.google.com/?q=..."
                   className="bg-input border-border"
                 />
@@ -97,7 +144,7 @@ export default function SettingsPage() {
               <Input
                 id="address"
                 value={settings.address}
-                onChange={(e) => handleChange('address', e.target.value)}
+                onChange={(e) => handleChange("address", e.target.value)}
                 placeholder="123 Beach Road, Colombo, Sri Lanka"
                 className="bg-input border-border"
               />
@@ -116,8 +163,10 @@ export default function SettingsPage() {
               <FormField label="Facebook" htmlFor="facebook">
                 <Input
                   id="facebook"
-                  value={settings.socialLinks.facebook || ''}
-                  onChange={(e) => handleChange('socialLinks.facebook', e.target.value)}
+                  value={settings.socialLinks.facebook || ""}
+                  onChange={(e) =>
+                    handleChange("socialLinks.facebook", e.target.value)
+                  }
                   placeholder="https://facebook.com/yourpage"
                   className="bg-input border-border"
                 />
@@ -126,8 +175,10 @@ export default function SettingsPage() {
               <FormField label="Instagram" htmlFor="instagram">
                 <Input
                   id="instagram"
-                  value={settings.socialLinks.instagram || ''}
-                  onChange={(e) => handleChange('socialLinks.instagram', e.target.value)}
+                  value={settings.socialLinks.instagram || ""}
+                  onChange={(e) =>
+                    handleChange("socialLinks.instagram", e.target.value)
+                  }
                   placeholder="https://instagram.com/yourpage"
                   className="bg-input border-border"
                 />
@@ -136,8 +187,10 @@ export default function SettingsPage() {
               <FormField label="TikTok" htmlFor="tiktok">
                 <Input
                   id="tiktok"
-                  value={settings.socialLinks.tiktok || ''}
-                  onChange={(e) => handleChange('socialLinks.tiktok', e.target.value)}
+                  value={settings.socialLinks.tiktok || ""}
+                  onChange={(e) =>
+                    handleChange("socialLinks.tiktok", e.target.value)
+                  }
                   placeholder="https://tiktok.com/@yourpage"
                   className="bg-input border-border"
                 />
@@ -156,5 +209,5 @@ export default function SettingsPage() {
         </Button>
       </FormActions>
     </div>
-  )
+  );
 }
