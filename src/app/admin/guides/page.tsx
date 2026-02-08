@@ -1,130 +1,166 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, User, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from "react";
+import { Plus, Pencil, Trash2, User, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { PageHeader } from '@/components/admin/page-header'
-import { DataTable, type Column } from '@/components/admin/data-table'
-import { ConfirmDialog } from '@/components/admin/confirm-dialog'
-import { FormSection, FormField, FormGrid, FormActions } from '@/components/admin/form-layout'
-import { ImageUploader } from '@/components/admin/image-uploader'
-import { useToast } from '@/components/admin/toast-provider'
-import { getGuides, createGuide, updateGuide, deleteGuide } from '@/lib/adminStore'
-import type { Guide } from '@/lib/types'
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/admin/page-header";
+import { DataTable, type Column } from "@/components/admin/data-table";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import {
+  FormSection,
+  FormField,
+  FormGrid,
+  FormActions,
+} from "@/components/admin/form-layout";
+import {
+  ImageUploader,
+  UploadedImage,
+} from "@/components/admin/image-uploader";
+import { useToast } from "@/components/admin/toast-provider";
+import {
+  getGuidesAdmin,
+  createGuide,
+  updateGuide,
+  deleteGuide,
+  Guide,
+} from "@/services/guides.service";
 
 const initialFormData = {
-  name: '',
-  role: '',
-  bio: '',
+  name: "",
+  role: "",
   languages: [] as string[],
   yearsExperience: 1,
-  profilePhoto: '',
-  contact: '',
-}
+  profilePhoto: "",
+};
 
 export default function GuidesPage() {
-  const { showToast } = useToast()
-  const [guides, setGuides] = useState<Guide[]>([])
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingGuide, setEditingGuide] = useState<Guide | null>(null)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [formData, setFormData] = useState(initialFormData)
-  const [newLanguage, setNewLanguage] = useState('')
+  const { showToast } = useToast();
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingGuide, setEditingGuide] = useState<Guide | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [formData, setFormData] = useState(initialFormData);
+  const [newLanguage, setNewLanguage] = useState("");
 
   useEffect(() => {
-    setGuides(getGuides())
-  }, [])
+    (async () => {
+      try {
+        const data = await getGuidesAdmin();
+
+        setGuides(data);
+      } catch (e) {
+        showToast("Failed to load guides", "error");
+      }
+    })();
+  }, [showToast]);
+
+  const refreshGuides = async () => {
+    const data = await getGuidesAdmin();
+    setGuides(data);
+  };
 
   useEffect(() => {
     if (editingGuide) {
       setFormData({
         name: editingGuide.name,
         role: editingGuide.role,
-        bio: editingGuide.bio,
         languages: editingGuide.languages,
         yearsExperience: editingGuide.yearsExperience,
         profilePhoto: editingGuide.profilePhoto,
-        contact: editingGuide.contact || '',
-      })
+      });
     } else {
-      setFormData(initialFormData)
+      setFormData(initialFormData);
     }
-  }, [editingGuide])
-
-  const refreshGuides = () => {
-    setGuides(getGuides())
-  }
+  }, [editingGuide]);
 
   const handleEdit = (guide: Guide) => {
-    setEditingGuide(guide)
-    setFormOpen(true)
-  }
+    setEditingGuide(guide);
+    setFormOpen(true);
+  };
 
-  const handleDelete = () => {
-    if (deleteId) {
-      deleteGuide(deleteId)
-      refreshGuides()
-      showToast('Guide deleted successfully', 'success')
-      setDeleteId(null)
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      await deleteGuide(deleteId);
+      await refreshGuides();
+      showToast("Guide deleted successfully", "success");
+    } catch (e) {
+      showToast("Delete failed", "error");
+    } finally {
+      setDeleteId(null);
     }
-  }
+  };
 
   const handleFormClose = () => {
-    setFormOpen(false)
-    setEditingGuide(null)
-    setFormData(initialFormData)
-    setNewLanguage('')
-  }
+    setFormOpen(false);
+    setEditingGuide(null);
+    setFormData(initialFormData);
+    setNewLanguage("");
+  };
 
   const addLanguage = () => {
-    if (newLanguage.trim() && !formData.languages.includes(newLanguage.trim())) {
-      setFormData({ ...formData, languages: [...formData.languages, newLanguage.trim()] })
-      setNewLanguage('')
+    if (
+      newLanguage.trim() &&
+      !formData.languages.includes(newLanguage.trim())
+    ) {
+      setFormData({
+        ...formData,
+        languages: [...formData.languages, newLanguage.trim()],
+      });
+      setNewLanguage("");
     }
-  }
+  };
 
   const removeLanguage = (index: number) => {
     setFormData({
       ...formData,
       languages: formData.languages.filter((_, i) => i !== index),
-    })
-  }
+    });
+  };
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.role || !formData.bio || !formData.profilePhoto) {
-      showToast('Please fill in all required fields', 'error')
-      return
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.role || !formData.profilePhoto) {
+      showToast("Please fill in all required fields", "error");
+      return;
     }
 
-    const guideData = {
-      ...formData,
-      contact: formData.contact || undefined,
-    }
+    try {
+      const guideData = { ...formData };
 
-    if (editingGuide) {
-      updateGuide(editingGuide.id, guideData)
-      showToast('Guide updated successfully', 'success')
-    } else {
-      createGuide(guideData)
-      showToast('Guide created successfully', 'success')
-    }
+      if (editingGuide) {
+        await updateGuide(editingGuide.id, guideData);
+        showToast("Guide updated successfully", "success");
+      } else {
+        await createGuide(guideData as any);
+        showToast("Guide created successfully", "success");
+      }
 
-    refreshGuides()
-    handleFormClose()
-  }
+      await refreshGuides();
+      handleFormClose();
+    } catch (e) {
+      showToast("Save failed (check admin login)", "error");
+    }
+  };
+
+  const uploaderValue: UploadedImage | undefined = formData.profilePhoto
+    ? {
+        url: formData.profilePhoto,
+        key: "existing-image",
+      }
+    : undefined;
 
   const columns: Column<Guide>[] = [
     {
-      key: 'name',
-      header: 'Guide',
+      key: "name",
+      header: "Guide",
       sortable: true,
       render: (guide) => (
         <div className="flex items-center gap-3">
@@ -143,14 +179,16 @@ export default function GuidesPage() {
           </div>
           <div>
             <span className="font-medium text-foreground">{guide.name}</span>
-            <span className="block text-xs text-muted-foreground">{guide.role}</span>
+            <span className="block text-xs text-muted-foreground">
+              {guide.role}
+            </span>
           </div>
         </div>
       ),
     },
     {
-      key: 'languages',
-      header: 'Languages',
+      key: "languages",
+      header: "Languages",
       render: (guide) => (
         <div className="flex flex-wrap gap-1">
           {guide.languages.slice(0, 3).map((lang) => (
@@ -162,38 +200,42 @@ export default function GuidesPage() {
             </span>
           ))}
           {guide.languages.length > 3 && (
-            <span className="text-xs text-muted-foreground">+{guide.languages.length - 3} more</span>
+            <span className="text-xs text-muted-foreground">
+              +{guide.languages.length - 3} more
+            </span>
           )}
         </div>
       ),
     },
     {
-      key: 'yearsExperience',
-      header: 'Experience',
+      key: "yearsExperience",
+      header: "Experience",
       sortable: true,
       render: (guide) => (
-        <span className="text-muted-foreground">{guide.yearsExperience} years</span>
+        <span className="text-muted-foreground">
+          {guide.yearsExperience} years
+        </span>
       ),
     },
     {
-      key: 'contact',
-      header: 'Contact',
+      key: "role",
+      header: "Role",
       render: (guide) => (
-        <span className="text-muted-foreground">{guide.contact || 'N/A'}</span>
+        <span className="text-muted-foreground">{guide.role}</span>
       ),
     },
     {
-      key: 'actions',
-      header: 'Actions',
-      className: 'text-right',
+      key: "actions",
+      header: "Actions",
+      className: "text-right",
       render: (guide) => (
         <div className="flex items-center justify-end gap-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={(e) => {
-              e.stopPropagation()
-              handleEdit(guide)
+              e.stopPropagation();
+              handleEdit(guide);
             }}
           >
             <Pencil className="h-4 w-4" />
@@ -202,8 +244,8 @@ export default function GuidesPage() {
             variant="ghost"
             size="icon"
             onClick={(e) => {
-              e.stopPropagation()
-              setDeleteId(guide.id)
+              e.stopPropagation();
+              setDeleteId(guide.id);
             }}
             className="text-destructive hover:text-destructive"
           >
@@ -212,7 +254,7 @@ export default function GuidesPage() {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
@@ -234,7 +276,7 @@ export default function GuidesPage() {
         data={guides}
         columns={columns}
         searchable
-        searchKeys={['name', 'role', 'bio']}
+        searchKeys={["name", "role"]}
         emptyMessage="No guides found. Add your first guide!"
       />
 
@@ -243,15 +285,23 @@ export default function GuidesPage() {
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-foreground">
-              {editingGuide ? 'Edit Guide' : 'Add Guide'}
+              {editingGuide ? "Edit Guide" : "Add Guide"}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6 py-4">
             <FormSection title="Profile Photo">
               <ImageUploader
-                value={formData.profilePhoto}
-                onChange={(value) => setFormData({ ...formData, profilePhoto: value as string })}
+                value={uploaderValue}
+                onChange={(value) => {
+                  if (!value) {
+                    setFormData({ ...formData, profilePhoto: "" });
+                    return;
+                  }
+
+                  const url = Array.isArray(value) ? value[0]?.url : value.url;
+                  setFormData({ ...formData, profilePhoto: url || "" });
+                }}
               />
             </FormSection>
 
@@ -261,7 +311,9 @@ export default function GuidesPage() {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Kasun Perera"
                     className="bg-input border-border"
                   />
@@ -271,43 +323,32 @@ export default function GuidesPage() {
                   <Input
                     id="role"
                     value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, role: e.target.value })
+                    }
                     placeholder="Lead Guide"
                     className="bg-input border-border"
                   />
                 </FormField>
               </FormGrid>
 
-              <FormField label="Bio" htmlFor="bio" required>
-                <Textarea
-                  id="bio"
-                  value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder="Kasun has been leading tours for over 10 years..."
-                  className="bg-input border-border min-h-[100px]"
-                />
-              </FormField>
-
               <FormGrid columns={2}>
-                <FormField label="Years of Experience" htmlFor="yearsExperience" required>
+                <FormField
+                  label="Years of Experience"
+                  htmlFor="yearsExperience"
+                  required
+                >
                   <Input
                     id="yearsExperience"
                     type="number"
                     min={0}
                     value={formData.yearsExperience}
                     onChange={(e) =>
-                      setFormData({ ...formData, yearsExperience: parseInt(e.target.value) || 0 })
+                      setFormData({
+                        ...formData,
+                        yearsExperience: parseInt(e.target.value) || 0,
+                      })
                     }
-                    className="bg-input border-border"
-                  />
-                </FormField>
-
-                <FormField label="Contact Number" htmlFor="contact">
-                  <Input
-                    id="contact"
-                    value={formData.contact}
-                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder="+94 77 123 4567"
                     className="bg-input border-border"
                   />
                 </FormField>
@@ -322,9 +363,15 @@ export default function GuidesPage() {
                     onChange={(e) => setNewLanguage(e.target.value)}
                     placeholder="Add a language (e.g., English, German)"
                     className="bg-input border-border"
-                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addLanguage())
+                    }
                   />
-                  <Button type="button" onClick={addLanguage} variant="secondary">
+                  <Button
+                    type="button"
+                    onClick={addLanguage}
+                    variant="secondary"
+                  >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -351,14 +398,18 @@ export default function GuidesPage() {
             </FormSection>
 
             <FormActions>
-              <Button variant="outline" onClick={handleFormClose} className="border-border bg-transparent">
+              <Button
+                variant="outline"
+                onClick={handleFormClose}
+                className="border-border bg-transparent"
+              >
                 Cancel
               </Button>
               <Button
                 onClick={handleSubmit}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {editingGuide ? 'Update Guide' : 'Add Guide'}
+                {editingGuide ? "Update Guide" : "Add Guide"}
               </Button>
             </FormActions>
           </div>
@@ -375,5 +426,5 @@ export default function GuidesPage() {
         onConfirm={handleDelete}
       />
     </div>
-  )
+  );
 }
