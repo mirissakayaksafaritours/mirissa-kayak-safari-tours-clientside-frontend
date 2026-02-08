@@ -1,29 +1,29 @@
-import { Shield, Users, MapPin, Award } from "lucide-react";
+import { Shield, Users, MapPin, Leaf } from "lucide-react";
 
 const features = [
   {
     icon: Shield,
-    title: "Safety First",
+    title: "Safety Comes First",
     description:
-      "All equipment is regularly maintained and inspected. Life jackets, safety briefings, and trained guides on every tour.",
+      "Certified life jackets for everyone, experienced guides, calm lagoon routes, and well-maintained equipment ensure a safe and relaxed kayaking experience.",
   },
   {
     icon: Users,
-    title: "Local Expert Guides",
+    title: "Experienced Local Guides",
     description:
-      "Our guides are born and raised in Mirissa. They know every secret spot, wildlife pattern, and safe passage.",
+      "Our friendly local guides know the lagoons inside out and provide clear safety briefings while helping you enjoy nature at your own pace.",
   },
   {
     icon: MapPin,
-    title: "Prime Location",
+    title: "Peaceful Lagoon Location",
     description:
-      "Mirissa offers the perfect combination of calm mangrove lagoons and exciting ocean waters for kayaking.",
+      "Located in Mirissa, our tours focus on calm lagoons and scenic waterways—perfect for beginners, families, and nature lovers.",
   },
   {
-    icon: Award,
-    title: "10+ Years Experience",
+    icon: Leaf,
+    title: "Nature-Focused Experience",
     description:
-      "Thousands of happy adventurers have explored with us. We're committed to unforgettable, responsible tours.",
+      "We offer quiet, eco-friendly kayaking that lets you enjoy wildlife, mangroves, and beautiful surroundings without fighting waves or crowds.",
   },
 ];
 
@@ -36,8 +36,8 @@ export function WhyChooseUs() {
             Why Choose Us
           </h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            We&apos;re passionate about providing safe, authentic, and memorable
-            kayaking experiences.
+            We focus on safe, peaceful, and nature-filled kayaking experiences
+            designed for all skill levels.
           </p>
         </div>
 

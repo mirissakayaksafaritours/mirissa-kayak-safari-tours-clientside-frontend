@@ -1,8 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { siteConfig, operatingHours } from "@/lib/site-config";
+import { useSiteSettings } from "@/context/site-settings-context";
+import { Facebook, Instagram, Music2 } from "lucide-react";
 
 export function Footer() {
+  const { settings, loading } = useSiteSettings();
+
+  const phone = settings?.phoneNumber || "";
+  const email = settings?.email || "";
+  const address = settings?.address || "";
+  const facebook = settings?.socialLinks.facebook || "";
+  const instagram = settings?.socialLinks.instagram || "";
+  const tiktok = settings?.socialLinks.tiktok || "";
+
   return (
     <footer className="bg-foreground text-background">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
@@ -13,6 +26,44 @@ export function Footer() {
             <p className="text-background/70 text-sm leading-relaxed">
               {siteConfig.description}
             </p>
+
+            <div className="flex items-center gap-4 pt-2">
+              {facebook && (
+                <a
+                  href={facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+              )}
+
+              {instagram && (
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              )}
+
+              {tiktok && (
+                <a
+                  href={tiktok}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="TikTok"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  <Music2 className="h-5 w-5" />
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -55,26 +106,40 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a
-                  href={`tel:${siteConfig.phone}`}
-                  className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
-                >
-                  <Phone className="h-4 w-4" />
-                  {siteConfig.phone}
-                </a>
+                {loading || !phone ? (
+                  <span className="flex items-center gap-2 text-sm text-background/70">
+                    <Phone className="h-4 w-4" />
+                    Phone
+                  </span>
+                ) : (
+                  <a
+                    href={`tel:${phone.replace(/\s+/g, "")}`}
+                    className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                    {phone}
+                  </a>
+                )}
               </li>
               <li>
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
-                >
-                  <Mail className="h-4 w-4" />
-                  {siteConfig.email}
-                </a>
+                {loading || !email ? (
+                  <span className="flex items-center gap-2 text-sm text-background/70">
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </span>
+                ) : (
+                  <a
+                    href={`mailto:${email}`}
+                    className="flex items-center gap-2 text-sm text-background/70 hover:text-background transition-colors"
+                  >
+                    <Mail className="h-4 w-4" />
+                    {email}
+                  </a>
+                )}
               </li>
               <li className="flex items-start gap-2 text-sm text-background/70">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                {siteConfig.address}
+                {loading || !address ? "Address" : address}
               </li>
             </ul>
           </div>

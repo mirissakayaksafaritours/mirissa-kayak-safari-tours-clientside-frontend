@@ -1,8 +1,14 @@
+"use client";
 import { Clock, Sun, MessageCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { siteConfig, weeklySchedule } from "@/lib/site-config";
+import { weeklySchedule } from "@/lib/site-config";
+import { useSiteSettings } from "@/context/site-settings-context";
 
 export function OperatingHours() {
+  const { settings, loading } = useSiteSettings();
+
+  const wa = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
+
   return (
     <section className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -55,22 +61,24 @@ export function OperatingHours() {
                   </h3>
                 </div>
                 <p className="text-muted-foreground mb-4 text-pretty">
-                  Early morning tours (5:30 AM – 9:00 AM) offer the calmest
-                  waters and best wildlife sightings. Late afternoon tours
-                  provide stunning sunset views over the ocean.
+                  Early morning tours (6:00 AM – 8:00 AM) offer the calmest
+                  lagoon waters and the best chances to spot birds and local
+                  wildlife. Late afternoon tours provide beautiful golden-hour
+                  views over the lake in a peaceful setting.
                 </p>
+
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Peak season: November – April
+                    Best time: 5:30 AM – 9:00 AM (calmest lake/lagoon waters)
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Whale watching: December – April
+                    Great light for photos: 4:00 PM – 6:00 PM
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Mangrove tours: Year-round
+                    Lagoon &amp; mangrove tours: Available year-round
                   </li>
                 </ul>
               </CardContent>
@@ -89,12 +97,20 @@ export function OperatingHours() {
                     <p className="text-sm text-muted-foreground text-pretty">
                       Hours may change due to weather conditions. Please confirm
                       your booking via WhatsApp at{" "}
-                      <a
-                        href={`https://wa.me/${siteConfig.whatsapp.replace(/[^0-9]/g, "")}`}
-                        className="text-primary hover:underline font-medium"
-                      >
-                        +{siteConfig.whatsapp}
-                      </a>
+                      {!loading && settings?.whatsappNumber ? (
+                        <a
+                          href={`https://wa.me/${wa}`}
+                          className="text-primary hover:underline font-medium"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          +{settings.whatsappNumber}
+                        </a>
+                      ) : (
+                        <span className="font-medium text-primary">
+                          WhatsApp
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>

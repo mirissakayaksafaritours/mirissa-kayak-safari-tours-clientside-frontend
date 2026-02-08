@@ -8,10 +8,14 @@ import { siteConfig } from "@/lib/site-config";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useSiteSettings } from "@/context/site-settings-context";
 
 export function Header() {
+  const { settings, loading } = useSiteSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const wa = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -44,7 +48,7 @@ export function Header() {
                 href={item.href}
                 className={cn(
                   "text-sm font-medium text-foreground/80 transition-colors hover:text-primary hover:underline underline-offset-8",
-                  isActive && "text-primary"
+                  isActive && "text-primary",
                 )}
               >
                 {item.name}
@@ -54,14 +58,18 @@ export function Header() {
         </div>
 
         <div className="hidden lg:flex lg:items-center lg:gap-4">
-          <Button asChild>
-            <a
-              href={`https://wa.me/${siteConfig.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Book on WhatsApp
-            </a>
+          <Button asChild disabled={loading || !wa}>
+            {wa ? (
+              <a
+                href={`https://wa.me/${wa}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Book on WhatsApp
+              </a>
+            ) : (
+              <span>Book on WhatsApp</span>
+            )}
           </Button>
         </div>
 
@@ -92,7 +100,7 @@ export function Header() {
                   href={item.href}
                   className={cn(
                     "block text-base font-medium text-foreground/80 transition-colors hover:text-primary hover:underline underline-offset-4",
-                    isActive && "text-primary"
+                    isActive && "text-primary",
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -100,14 +108,18 @@ export function Header() {
                 </Link>
               );
             })}
-            <Button asChild className="w-full mt-4">
-              <a
-                href={`https://wa.me/${siteConfig.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Book on WhatsApp
-              </a>
+            <Button asChild className="w-full mt-4" disabled={loading || !wa}>
+              {wa ? (
+                <a
+                  href={`https://wa.me/${wa}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Book on WhatsApp
+                </a>
+              ) : (
+                <span>Book on WhatsApp</span>
+              )}
             </Button>
           </div>
         </div>

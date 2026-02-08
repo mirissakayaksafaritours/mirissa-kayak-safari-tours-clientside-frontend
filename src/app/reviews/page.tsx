@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Star } from "lucide-react";
-import { reviews as allReviews } from "@/lib/site-config";
 import { Header } from "@/components/header/header";
 import { Footer } from "@/components/footer/footer";
 import {
@@ -14,15 +13,10 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-interface Review {
-  id: number;
-  name: string;
-  country: string;
-  rating: number;
-  text: string;
-  date: string;
-}
+import { getReviews, type Reviews } from "@/services/reviews.service";
+import { useSiteSettings } from "@/context/site-settings-context";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (
@@ -93,16 +87,61 @@ function ExpandableReviewText({ text }: { text: string }) {
   );
 }
 
+function ReviewSkeleton() {
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="pb-3 space-y-3">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-4 w-4 rounded-full" />
+          ))}
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 space-y-3">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-3 w-24 mt-4" />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function ReviewsPage() {
+  const { settings } = useSiteSettings();
+  const [allReviews, setAllReviews] = useState<Reviews[]>([]);
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("recent");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Calculate stats
+  const googleMapsLink = settings?.googleMapsLink;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [items] = await Promise.all([
+          getReviews(200),
+          new Promise((resolve) => setTimeout(resolve, 400)),
+        ]);
+
+        setAllReviews(items);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   const totalReviews = allReviews.length;
-  const averageRating = (
-    allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
-  ).toFixed(1);
+  const averageRating = totalReviews
+    ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(
+        1,
+      )
+    : "0.0";
+
   const ratingCounts = {
     5: allReviews.filter((r) => r.rating === 5).length,
     4: allReviews.filter((r) => r.rating === 4).length,
@@ -111,12 +150,10 @@ export default function ReviewsPage() {
     1: allReviews.filter((r) => r.rating === 1).length,
   };
 
-  // Get unique countries
   const countries = Array.from(
     new Set(allReviews.map((r) => r.country)),
   ).sort();
 
-  // Filter and sort reviews
   const filteredReviews = useMemo(() => {
     let filtered = allReviews.filter((review) => {
       const ratingMatch =
@@ -126,26 +163,18 @@ export default function ReviewsPage() {
       return ratingMatch && countryMatch;
     });
 
-    // Sort reviews
     filtered.sort((a, b) => {
-      if (sortBy === "recent") {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      } else if (sortBy === "highest") {
-        return (
-          b.rating - a.rating ||
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-      } else if (sortBy === "lowest") {
-        return (
-          a.rating - b.rating ||
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-      }
+      const aDate = a.date ? new Date(a.date).getTime() : 0;
+      const bDate = b.date ? new Date(b.date).getTime() : 0;
+
+      if (sortBy === "recent") return bDate - aDate;
+      if (sortBy === "highest") return b.rating - a.rating || bDate - aDate;
+      if (sortBy === "lowest") return a.rating - b.rating || bDate - aDate;
       return 0;
     });
 
     return filtered;
-  }, [ratingFilter, countryFilter, sortBy]);
+  }, [allReviews, ratingFilter, countryFilter, sortBy]);
 
   return (
     <>
@@ -262,9 +291,15 @@ export default function ReviewsPage() {
           </div>
 
           {/* Reviews Grid */}
-          {filteredReviews.length > 0 ? (
+          {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredReviews.map((review: Review) => (
+              {Array.from({ length: 3 }).map((_, i) => (
+                <ReviewSkeleton key={i} />
+              ))}
+            </div>
+          ) : filteredReviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredReviews.map((review: Reviews) => (
                 <Card key={review.id} className="flex flex-col">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
@@ -279,6 +314,7 @@ export default function ReviewsPage() {
                       <StarRating rating={review.rating} />
                     </div>
                   </CardHeader>
+
                   <CardContent className="flex-1 flex flex-col">
                     <ExpandableReviewText text={review.text} />
                     <p className="text-xs text-muted-foreground mt-4 pt-4 border-t">
@@ -297,6 +333,20 @@ export default function ReviewsPage() {
               <p className="text-lg text-foreground/60">
                 No reviews match your filters. Try adjusting your selection.
               </p>
+            </div>
+          )}
+
+          {googleMapsLink && (
+            <div className="mt-12 text-center">
+              <Button asChild variant="outline" size="lg">
+                <a
+                  href={googleMapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  See original reviews on Google
+                </a>
+              </Button>
             </div>
           )}
         </div>
