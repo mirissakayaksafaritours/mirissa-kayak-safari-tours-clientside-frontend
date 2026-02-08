@@ -61,22 +61,24 @@ export function OperatingHours() {
                   </h3>
                 </div>
                 <p className="text-muted-foreground mb-4 text-pretty">
-                  Early morning tours (5:30 AM – 9:00 AM) offer the calmest
-                  waters and best wildlife sightings. Late afternoon tours
-                  provide stunning sunset views over the ocean.
+                  Early morning tours (6:00 AM – 8:00 AM) offer the calmest
+                  lagoon waters and the best chances to spot birds and local
+                  wildlife. Late afternoon tours provide beautiful golden-hour
+                  views over the lake in a peaceful setting.
                 </p>
+
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Peak season: November – April
+                    Best time: 5:30 AM – 9:00 AM (calmest lake/lagoon waters)
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Whale watching: December – April
+                    Great light for photos: 4:00 PM – 6:00 PM
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Mangrove tours: Year-round
+                    Lagoon &amp; mangrove tours: Available year-round
                   </li>
                 </ul>
               </CardContent>
