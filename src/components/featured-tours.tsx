@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { tours } from "@/lib/site-config";
 import { TourCard } from "@/components/tour-card";
 import { Button } from "@/components/ui/button";
+import { getFeaturedTours } from "@/services/tours.service";
 
-export function FeaturedTours() {
-  const featuredTours = tours.slice(0, 3);
+export async function FeaturedTours() {
+  const featuredTours = await getFeaturedTours();
+
+  if (!featuredTours.length) return null;
 
   return (
     <section className="py-20 px-4 bg-background">
@@ -21,7 +23,14 @@ export function FeaturedTours() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredTours.map((tour, index) => (
-            <TourCard key={tour.id} {...tour} featured={index === 1} />
+            <TourCard
+              key={tour.id}
+              name={tour.title}
+              duration={tour.duration}
+              price={`Rs. ${tour.priceLKR.toLocaleString()}`}
+              description={tour.shortDescription ?? ""}
+              highlights={tour.includes ?? []}
+            />
           ))}
         </div>
 

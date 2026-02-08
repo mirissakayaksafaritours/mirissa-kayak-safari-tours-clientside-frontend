@@ -15,7 +15,6 @@ interface TourCardProps {
   price: string;
   description: string;
   highlights: string[];
-  featured?: boolean;
 }
 
 export function TourCard({
@@ -24,21 +23,13 @@ export function TourCard({
   price,
   description,
   highlights,
-  featured,
 }: TourCardProps) {
   const { settings } = useSiteSettings();
 
   const waNumber = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
 
   return (
-    <Card
-      className={`flex flex-col h-full ${featured ? "border-primary border-2" : ""}`}
-    >
-      {featured && (
-        <div className="bg-primary text-primary-foreground text-xs font-medium text-center py-1">
-          Most Popular
-        </div>
-      )}
+    <Card className={"flex flex-col h-full w-full max-w-md mx-auto"}>
       <CardHeader className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-card-foreground">{name}</h3>
