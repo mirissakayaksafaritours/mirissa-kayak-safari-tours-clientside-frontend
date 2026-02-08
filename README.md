@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mirissa Kayak Safari Tours — Clientside Frontend
+
+Modern, content-driven website for Mirissa Kayak Safari Tours, built with Next.js (App Router) and Tailwind CSS. The app renders the marketing pages (home, tours, gallery, about, reviews, contact) and pulls dynamic content from a backend API.
+
+## What The Project Does
+
+This repository contains the clientside frontend for Mirissa Kayak Safari Tours. It provides:
+- A high-performance marketing site with server-rendered pages.
+- Data-driven sections for tours, reviews, guides, FAQs, and gallery content.
+- A clean, reusable component library for consistent UI.
+
+## Why It’s Useful
+
+- Fast iteration on marketing and content pages without touching the backend.
+- Centralized API integration with typed service modules.
+- Scalable layout and component structure for new pages or sections.
+- Production-ready Next.js setup with linting and TypeScript.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+ (recommended)
+- npm (or a compatible package manager)
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api
+```
+
+### Run The App
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build For Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Usage Examples
 
-To learn more about Next.js, take a look at the following resources:
+Fetch data from the backend API using the typed service layer:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```ts
+import { getFeaturedTours } from "@/services/tours.service";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+const featuredTours = await getFeaturedTours();
+```
 
-## Deploy on Vercel
+Render marketing sections in a page:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```tsx
+import Hero from "@/components/hero";
+import FeaturedTours from "@/components/featured-tours";
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+export default function HomePage() {
+  return (
+    <>
+      <Hero />
+      <FeaturedTours />
+    </>
+  );
+}
+```
+
+## Project Structure
+
+- `src/app` — App Router pages and route segments
+- `src/components` — UI and page components
+- `src/services` — API service modules (tours, gallery, reviews, etc.)
+- `src/lib` — shared utilities and configuration
+- `public` — static assets (images, icons, manifest)
+
+## Scripts
+
+- `npm run dev` — start the development server
+- `npm run build` — production build
+- `npm run start` — serve production build
+- `npm run lint` — run ESLint
+
+## Help And Support
+
+If you run into issues:
+- Check your `.env.local` for a valid `NEXT_PUBLIC_API_BASE_URL`.
+- Confirm the backend API is running and reachable from your machine.
+- Open a GitHub Issue describing the problem and reproduction steps.
+
+## Maintainers And Contributions
+
+Maintained by the Mirissa Kayak Safari Tours team and contributors.
+
+Contributions are welcome. Open an issue or pull request with a clear description of the change.
