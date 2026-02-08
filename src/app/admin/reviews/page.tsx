@@ -1,42 +1,52 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Star } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { useState, useEffect } from "react";
+import { Plus, Pencil, Trash2, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { PageHeader } from '@/components/admin/page-header'
-import { DataTable, type Column } from '@/components/admin/data-table'
-import { ConfirmDialog } from '@/components/admin/confirm-dialog'
-import { FormSection, FormField, FormGrid, FormActions } from '@/components/admin/form-layout'
-import { useToast } from '@/components/admin/toast-provider'
-import { getReviews, createReview, updateReview, deleteReview } from '@/lib/adminStore'
-import type { Review } from '@/lib/types'
+} from "@/components/ui/select";
+import { PageHeader } from "@/components/admin/page-header";
+import { DataTable, type Column } from "@/components/admin/data-table";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import {
+  FormSection,
+  FormField,
+  FormGrid,
+  FormActions,
+} from "@/components/admin/form-layout";
+import { useToast } from "@/components/admin/toast-provider";
+import {
+  getReviewsAdmin,
+  createReview,
+  updateReview,
+  deleteReview,
+  Review,
+} from "@/services/reviews.service";
 
 const initialFormData = {
-  name: '',
-  country: '',
+  name: "",
+  country: "",
   stars: 5 as 1 | 2 | 3 | 4 | 5,
-  content: '',
-  date: '',
+  content: "",
+  date: "",
   featured: false,
-}
+};
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -45,152 +55,173 @@ function StarRating({ rating }: { rating: number }) {
         <Star
           key={star}
           className={`h-4 w-4 ${
-            star <= rating ? 'fill-accent text-accent' : 'text-muted-foreground'
+            star <= rating ? "fill-accent text-accent" : "text-muted-foreground"
           }`}
         />
       ))}
     </div>
-  )
+  );
 }
 
 export default function ReviewsPage() {
-  const { showToast } = useToast()
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingReview, setEditingReview] = useState<Review | null>(null)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [formData, setFormData] = useState(initialFormData)
+  const { showToast } = useToast();
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
-    setReviews(getReviews())
-  }, [])
+    (async () => {
+      try {
+        const items = await getReviewsAdmin();
+        setReviews(items);
+      } catch (e: any) {
+        showToast(e.message || "Failed to load reviews", "error");
+      }
+    })();
+  }, [showToast]);
 
   useEffect(() => {
     if (editingReview) {
       setFormData({
         name: editingReview.name,
-        country: editingReview.country || '',
+        country: editingReview.country || "",
         stars: editingReview.stars,
         content: editingReview.content,
-        date: editingReview.date || '',
+        date: editingReview.date || "",
         featured: editingReview.featured,
-      })
+      });
     } else {
-      setFormData(initialFormData)
+      setFormData(initialFormData);
     }
-  }, [editingReview])
+  }, [editingReview]);
 
-  const refreshReviews = () => {
-    setReviews(getReviews())
-  }
+  const refreshReviews = async () => {
+    const items = await getReviewsAdmin();
+    setReviews(items);
+  };
 
   const handleEdit = (review: Review) => {
-    setEditingReview(review)
-    setFormOpen(true)
-  }
+    setEditingReview(review);
+    setFormOpen(true);
+  };
 
-  const handleDelete = () => {
-    if (deleteId) {
-      deleteReview(deleteId)
-      refreshReviews()
-      showToast('Review deleted successfully', 'success')
-      setDeleteId(null)
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      await deleteReview(deleteId);
+      await refreshReviews();
+      showToast("Review deleted successfully", "success");
+    } catch (e: any) {
+      showToast(e.message || "Delete failed", "error");
+    } finally {
+      setDeleteId(null);
     }
-  }
+  };
 
   const handleFormClose = () => {
-    setFormOpen(false)
-    setEditingReview(null)
-    setFormData(initialFormData)
-  }
+    setFormOpen(false);
+    setEditingReview(null);
+    setFormData(initialFormData);
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name || !formData.content) {
-      showToast('Please fill in all required fields', 'error')
-      return
+      showToast("Please fill in all required fields", "error");
+      return;
     }
 
     const reviewData = {
       ...formData,
       country: formData.country || undefined,
       date: formData.date || undefined,
-    }
+    };
 
-    if (editingReview) {
-      updateReview(editingReview.id, reviewData)
-      showToast('Review updated successfully', 'success')
-    } else {
-      createReview(reviewData)
-      showToast('Review created successfully', 'success')
-    }
+    try {
+      if (editingReview) {
+        await updateReview(editingReview.id, reviewData);
+        showToast("Review updated successfully", "success");
+      } else {
+        await createReview(reviewData);
+        showToast("Review created successfully", "success");
+      }
 
-    refreshReviews()
-    handleFormClose()
-  }
+      await refreshReviews();
+      handleFormClose();
+    } catch (e: any) {
+      showToast(e.message || "Save failed", "error");
+    }
+  };
 
   const columns: Column<Review>[] = [
     {
-      key: 'name',
-      header: 'Reviewer',
+      key: "name",
+      header: "Reviewer",
       sortable: true,
       render: (review) => (
         <div>
           <span className="font-medium text-foreground">{review.name}</span>
           {review.country && (
-            <span className="block text-xs text-muted-foreground">{review.country}</span>
+            <span className="block text-xs text-muted-foreground">
+              {review.country}
+            </span>
           )}
         </div>
       ),
     },
     {
-      key: 'stars',
-      header: 'Rating',
+      key: "stars",
+      header: "Rating",
       sortable: true,
       render: (review) => <StarRating rating={review.stars} />,
     },
     {
-      key: 'content',
-      header: 'Review',
+      key: "content",
+      header: "Review",
       render: (review) => (
-        <span className="text-muted-foreground line-clamp-2">{review.content}</span>
+        <span className="text-muted-foreground line-clamp-2">
+          {review.content}
+        </span>
       ),
     },
     {
-      key: 'date',
-      header: 'Date',
+      key: "date",
+      header: "Date",
       sortable: true,
       render: (review) => (
-        <span className="text-muted-foreground">{review.date || 'N/A'}</span>
+        <span className="text-muted-foreground">{review.date || "N/A"}</span>
       ),
     },
     {
-      key: 'featured',
-      header: 'Status',
+      key: "featured",
+      header: "Status",
       render: (review) => (
         <Badge
-          variant={review.featured ? 'default' : 'secondary'}
+          variant={review.featured ? "default" : "secondary"}
           className={
             review.featured
-              ? 'bg-accent text-accent-foreground'
-              : 'bg-secondary text-secondary-foreground'
+              ? "bg-accent text-accent-foreground"
+              : "bg-secondary text-secondary-foreground"
           }
         >
-          {review.featured ? 'Featured' : 'Standard'}
+          {review.featured ? "Featured" : "Standard"}
         </Badge>
       ),
     },
     {
-      key: 'actions',
-      header: 'Actions',
-      className: 'text-right',
+      key: "actions",
+      header: "Actions",
+      className: "text-right",
       render: (review) => (
         <div className="flex items-center justify-end gap-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={(e) => {
-              e.stopPropagation()
-              handleEdit(review)
+              e.stopPropagation();
+              handleEdit(review);
             }}
           >
             <Pencil className="h-4 w-4" />
@@ -199,8 +230,8 @@ export default function ReviewsPage() {
             variant="ghost"
             size="icon"
             onClick={(e) => {
-              e.stopPropagation()
-              setDeleteId(review.id)
+              e.stopPropagation();
+              setDeleteId(review.id);
             }}
             className="text-destructive hover:text-destructive"
           >
@@ -209,7 +240,7 @@ export default function ReviewsPage() {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
@@ -231,7 +262,7 @@ export default function ReviewsPage() {
         data={reviews}
         columns={columns}
         searchable
-        searchKeys={['name', 'content', 'country']}
+        searchKeys={["name", "content", "country"]}
         emptyMessage="No reviews found. Add your first review!"
       />
 
@@ -240,7 +271,7 @@ export default function ReviewsPage() {
         <DialogContent className="max-w-lg bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-foreground">
-              {editingReview ? 'Edit Review' : 'Add Review'}
+              {editingReview ? "Edit Review" : "Add Review"}
             </DialogTitle>
           </DialogHeader>
 
@@ -251,7 +282,9 @@ export default function ReviewsPage() {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="John Smith"
                     className="bg-input border-border"
                   />
@@ -261,7 +294,9 @@ export default function ReviewsPage() {
                   <Input
                     id="country"
                     value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, country: e.target.value })
+                    }
                     placeholder="United Kingdom"
                     className="bg-input border-border"
                   />
@@ -273,7 +308,10 @@ export default function ReviewsPage() {
                   <Select
                     value={String(formData.stars)}
                     onValueChange={(value) =>
-                      setFormData({ ...formData, stars: parseInt(value) as 1 | 2 | 3 | 4 | 5 })
+                      setFormData({
+                        ...formData,
+                        stars: parseInt(value) as 1 | 2 | 3 | 4 | 5,
+                      })
                     }
                   >
                     <SelectTrigger className="bg-input border-border">
@@ -282,7 +320,7 @@ export default function ReviewsPage() {
                     <SelectContent>
                       {[5, 4, 3, 2, 1].map((num) => (
                         <SelectItem key={num} value={String(num)}>
-                          {num} {num === 1 ? 'Star' : 'Stars'}
+                          {num} {num === 1 ? "Star" : "Stars"}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -294,7 +332,9 @@ export default function ReviewsPage() {
                     id="date"
                     type="date"
                     value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, date: e.target.value })
+                    }
                     className="bg-input border-border"
                   />
                 </FormField>
@@ -304,7 +344,9 @@ export default function ReviewsPage() {
                 <Textarea
                   id="content"
                   value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, content: e.target.value })
+                  }
                   placeholder="Amazing experience! The tour was..."
                   className="bg-input border-border min-h-[100px]"
                 />
@@ -314,7 +356,9 @@ export default function ReviewsPage() {
                 <Switch
                   id="featured"
                   checked={formData.featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, featured: checked })
+                  }
                 />
                 <Label htmlFor="featured" className="text-foreground">
                   Featured review (shown prominently)
@@ -323,14 +367,18 @@ export default function ReviewsPage() {
             </FormSection>
 
             <FormActions>
-              <Button variant="outline" onClick={handleFormClose} className="border-border bg-transparent">
+              <Button
+                variant="outline"
+                onClick={handleFormClose}
+                className="border-border bg-transparent"
+              >
                 Cancel
               </Button>
               <Button
                 onClick={handleSubmit}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {editingReview ? 'Update Review' : 'Add Review'}
+                {editingReview ? "Update Review" : "Add Review"}
               </Button>
             </FormActions>
           </div>
@@ -347,5 +395,5 @@ export default function ReviewsPage() {
         onConfirm={handleDelete}
       />
     </div>
-  )
+  );
 }
