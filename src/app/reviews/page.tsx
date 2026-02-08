@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { getReviews, type Reviews } from "@/services/reviews.service";
 import { useSiteSettings } from "@/context/site-settings-context";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (
@@ -86,19 +87,51 @@ function ExpandableReviewText({ text }: { text: string }) {
   );
 }
 
+function ReviewSkeleton() {
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="pb-3 space-y-3">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-4 w-4 rounded-full" />
+          ))}
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 space-y-3">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-3 w-24 mt-4" />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function ReviewsPage() {
-  const { settings, loading } = useSiteSettings();
+  const { settings } = useSiteSettings();
   const [allReviews, setAllReviews] = useState<Reviews[]>([]);
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("recent");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const googleMapsLink = settings?.googleMapsLink;
 
   useEffect(() => {
     (async () => {
-      const items = await getReviews(200);
-      setAllReviews(items);
+      try {
+        const [items] = await Promise.all([
+          getReviews(200),
+          new Promise((resolve) => setTimeout(resolve, 400)),
+        ]);
+
+        setAllReviews(items);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
@@ -258,7 +291,13 @@ export default function ReviewsPage() {
           </div>
 
           {/* Reviews Grid */}
-          {filteredReviews.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <ReviewSkeleton key={i} />
+              ))}
+            </div>
+          ) : filteredReviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredReviews.map((review: Reviews) => (
                 <Card key={review.id} className="flex flex-col">
@@ -275,6 +314,7 @@ export default function ReviewsPage() {
                       <StarRating rating={review.rating} />
                     </div>
                   </CardHeader>
+
                   <CardContent className="flex-1 flex flex-col">
                     <ExpandableReviewText text={review.text} />
                     <p className="text-xs text-muted-foreground mt-4 pt-4 border-t">
