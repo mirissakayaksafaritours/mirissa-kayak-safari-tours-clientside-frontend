@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
-import { reviews } from "@/lib/site-config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getTopReviews, type Reviews } from "@/services/reviews.service";
+import { Skeleton } from "./ui/skeleton";
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (
@@ -51,12 +52,43 @@ function ExpandableReviewText({ text }: { text: string }) {
   );
 }
 
+function ReviewSkeleton() {
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="pb-3 space-y-3">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-4 w-4 rounded-full" />
+          ))}
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 space-y-3">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-3 w-24 mt-4" />
+      </CardContent>
+    </Card>
+  );
+}
+
 export function Reviews() {
-  const topReviews = reviews
-    .filter((r) => r.rating === 5)
-    .slice()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 3);
+  const [topReviews, setTopReviews] = useState<Reviews[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const items = await getTopReviews(3);
+        setTopReviews(items);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <section className="py-20 px-4 bg-background">
@@ -72,36 +104,40 @@ export function Reviews() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {topReviews.map((review) => (
-            <Card key={review.id} className="flex flex-col">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-lg">{review.name}</CardTitle>
-                    <Badge variant="secondary" className="mt-2">
-                      {review.country}
-                    </Badge>
-                  </div>
-                </div>
+          {loading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <ReviewSkeleton key={i} />
+              ))
+            : topReviews.map((review) => (
+                <Card key={review.id} className="flex flex-col">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <CardTitle className="text-lg">{review.name}</CardTitle>
+                        <Badge variant="secondary" className="mt-2">
+                          {review.country}
+                        </Badge>
+                      </div>
+                    </div>
 
-                <div className="mt-3">
-                  <StarRating rating={review.rating} />
-                </div>
-              </CardHeader>
+                    <div className="mt-3">
+                      <StarRating rating={review.rating} />
+                    </div>
+                  </CardHeader>
 
-              <CardContent className="flex-1 flex flex-col">
-                <ExpandableReviewText text={review.text} />
+                  <CardContent className="flex-1 flex flex-col">
+                    <ExpandableReviewText text={review.text} />
 
-                <p className="text-xs text-muted-foreground mt-4 pt-4 border-t">
-                  {new Date(review.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+                    <p className="text-xs text-muted-foreground mt-4 pt-4 border-t">
+                      {new Date(review.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
         </div>
 
         <div className="text-center mt-12">
