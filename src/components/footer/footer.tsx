@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { siteConfig, operatingHours } from "@/lib/site-config";
 import { useSiteSettings } from "@/context/site-settings-context";
+import { Facebook, Instagram, Music2 } from "lucide-react";
 
 export function Footer() {
   const { settings, loading } = useSiteSettings();
@@ -11,6 +12,9 @@ export function Footer() {
   const phone = settings?.phoneNumber || "";
   const email = settings?.email || "";
   const address = settings?.address || "";
+  const facebook = settings?.socialLinks.facebook || "";
+  const instagram = settings?.socialLinks.instagram || "";
+  const tiktok = settings?.socialLinks.tiktok || "";
 
   return (
     <footer className="bg-foreground text-background">
@@ -22,6 +26,44 @@ export function Footer() {
             <p className="text-background/70 text-sm leading-relaxed">
               {siteConfig.description}
             </p>
+
+            <div className="flex items-center gap-4 pt-2">
+              {facebook && (
+                <a
+                  href={facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+              )}
+
+              {instagram && (
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              )}
+
+              {tiktok && (
+                <a
+                  href={tiktok}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="TikTok"
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  <Music2 className="h-5 w-5" />
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Quick Links */}
