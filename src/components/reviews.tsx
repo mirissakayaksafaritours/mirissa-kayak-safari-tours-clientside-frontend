@@ -84,6 +84,8 @@ export function Reviews() {
       try {
         const items = await getTopReviews(3);
         setTopReviews(items);
+      } catch {
+        setTopReviews([]);
       } finally {
         setLoading(false);
       }
@@ -129,11 +131,12 @@ export function Reviews() {
                     <ExpandableReviewText text={review.text} />
 
                     <p className="text-xs text-muted-foreground mt-4 pt-4 border-t">
-                      {new Date(review.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {review.date &&
+                        new Date(review.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                     </p>
                   </CardContent>
                 </Card>

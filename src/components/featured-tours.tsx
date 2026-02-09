@@ -1,10 +1,51 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { TourCard } from "@/components/tour-card";
 import { Button } from "@/components/ui/button";
-import { getFeaturedTours } from "@/services/tours.service";
+import { getFeaturedTours, type TourPackage } from "@/services/tours.service";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export async function FeaturedTours() {
-  const featuredTours = await getFeaturedTours();
+export function FeaturedTours() {
+  const [featuredTours, setFeaturedTours] = useState<TourPackage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getFeaturedTours();
+        setFeaturedTours(data);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 bg-background">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-12 space-y-4">
+            <Skeleton className="h-9 w-72 mx-auto" />
+            <Skeleton className="h-5 w-[520px] mx-auto" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-lg border p-4 space-y-3">
+                <Skeleton className="h-40 w-full" />
+                <Skeleton className="h-5 w-[70%]" />
+                <Skeleton className="h-4 w-[50%]" />
+                <Skeleton className="h-4 w-[90%]" />
+                <Skeleton className="h-4 w-[60%]" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (!featuredTours.length) return null;
 
@@ -22,7 +63,7 @@ export async function FeaturedTours() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredTours.map((tour, index) => (
+          {featuredTours.map((tour) => (
             <TourCard
               key={tour.id}
               name={tour.title}
