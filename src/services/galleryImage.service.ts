@@ -37,7 +37,7 @@ const mapImage = (img: any): GalleryImage => ({
 });
 
 export async function getGalleryImagesAdmin(): Promise<GalleryImage[]> {
-  const { data } = await api.get("/gallery-images/admin");
+  const { data } = await api.get("/api/gallery-images/admin");
   return (data.images ?? []).map(mapImage);
 }
 
@@ -45,14 +45,14 @@ export async function presignGalleryImageUpload(payload: {
   fileName: string;
   contentType: string;
 }): Promise<{ uploadUrl: string; key: string; publicUrl: string }> {
-  const { data } = await api.post("/gallery-images/presign", payload);
+  const { data } = await api.post("/api/gallery-images/presign", payload);
   return data;
 }
 
 export async function createGalleryImage(
   payload: CreateGalleryImagePayload,
 ): Promise<GalleryImage> {
-  const { data } = await api.post("/gallery-images", payload);
+  const { data } = await api.post("/api/gallery-images", payload);
   return mapImage(data.image);
 }
 
@@ -60,11 +60,11 @@ export async function updateGalleryImage(
   id: string,
   payload: UpdateGalleryImagePayload,
 ): Promise<GalleryImage> {
-  const { data } = await api.put(`/gallery-images/${id}`, payload);
+  const { data } = await api.put(`/api/gallery-images/${id}`, payload);
   return mapImage(data.image);
 }
 
 export async function deleteGalleryImage(id: string): Promise<{ ok: true }> {
-  const { data } = await api.delete(`/gallery-images/${id}`);
+  const { data } = await api.delete(`/api/gallery-images/${id}`);
   return data;
 }

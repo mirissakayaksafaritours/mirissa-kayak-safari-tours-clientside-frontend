@@ -29,13 +29,13 @@ const mapGuide = (g: any): Guide => ({
 });
 
 export async function getGuidesAdmin(): Promise<Guide[]> {
-  const { data } = await api.get("/guides/admin");
+  const { data } = await api.get("/api/guides/admin");
   const list = data.guides ?? data ?? [];
   return list.map(mapGuide);
 }
 
 export async function createGuide(payload: CreateGuidePayload): Promise<Guide> {
-  const { data } = await api.post("/guides", payload);
+  const { data } = await api.post("/api/guides", payload);
   return mapGuide(data.guide ?? data);
 }
 
@@ -43,11 +43,11 @@ export async function updateGuide(
   id: string,
   payload: UpdateGuidePayload,
 ): Promise<Guide> {
-  const { data } = await api.put(`/guides/${id}`, payload);
+  const { data } = await api.put(`/api/guides/${id}`, payload);
   return mapGuide(data.guide ?? data);
 }
 
 export async function deleteGuide(id: string): Promise<{ ok: true }> {
-  const { data } = await api.delete(`/guides/${id}`);
+  const { data } = await api.delete(`/api/guides/${id}`);
   return data;
 }

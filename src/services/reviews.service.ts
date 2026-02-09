@@ -15,7 +15,7 @@ function mapReview(r: any): Review {
 }
 
 export async function getReviewsAdmin(): Promise<Review[]> {
-  const { data } = await api.get("/reviews/admin");
+  const { data } = await api.get("/api/reviews/admin");
   const items = Array.isArray(data) ? data : data?.reviews || [];
   return items.map(mapReview);
 }
@@ -28,7 +28,7 @@ export async function createReview(payload: {
   date?: string;
   featured: boolean;
 }) {
-  const { data } = await api.post("/reviews/admin", payload);
+  const { data } = await api.post("/api/reviews/admin", payload);
   return data;
 }
 
@@ -43,11 +43,11 @@ export async function updateReview(
     featured: boolean;
   }>,
 ) {
-  const { data } = await api.put(`/reviews/admin/${id}`, payload);
+  const { data } = await api.put(`/api/reviews/admin/${id}`, payload);
   return data;
 }
 
 export async function deleteReview(id: string) {
-  const { data } = await api.delete(`/reviews/admin/${id}`);
+  const { data } = await api.delete(`/api/reviews/admin/${id}`);
   return data;
 }

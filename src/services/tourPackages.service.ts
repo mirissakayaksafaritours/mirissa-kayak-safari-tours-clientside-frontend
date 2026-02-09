@@ -37,14 +37,14 @@ const mapTour = (t: any): TourPackage => ({
 });
 
 export async function getTourPackagesAdmin(): Promise<TourPackage[]> {
-  const { data } = await api.get("/tour-packages/admin/all");
+  const { data } = await api.get("/api/tour-packages/admin/all");
   return (data.tours ?? []).map(mapTour);
 }
 
 export async function createTourPackage(
   payload: TourPackagePayload,
 ): Promise<TourPackage> {
-  const { data } = await api.post("/tour-packages/admin", payload);
+  const { data } = await api.post("/api/tour-packages/admin", payload);
   return mapTour(data.tour);
 }
 
@@ -52,10 +52,10 @@ export async function updateTourPackage(
   id: string,
   payload: Partial<TourPackagePayload>,
 ): Promise<TourPackage> {
-  const { data } = await api.put(`/tour-packages/admin/${id}`, payload);
+  const { data } = await api.put(`/api/tour-packages/admin/${id}`, payload);
   return mapTour(data.tour);
 }
 
 export async function deleteTourPackage(id: string): Promise<void> {
-  await api.delete(`/tour-packages/admin/${id}`);
+  await api.delete(`/api/tour-packages/admin/${id}`);
 }

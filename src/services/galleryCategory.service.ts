@@ -29,14 +29,14 @@ const mapCategory = (c: any): GalleryCategory => ({
 });
 
 export async function getGalleryCategories(): Promise<GalleryCategory[]> {
-  const { data } = await api.get("/gallery-categories/admin");
+  const { data } = await api.get("/api/gallery-categories/admin");
   return (data.categories ?? []).map(mapCategory);
 }
 
 export async function createGalleryCategory(
   payload: CreateGalleryCategoryPayload,
 ): Promise<GalleryCategory> {
-  const { data } = await api.post("/gallery-categories", payload);
+  const { data } = await api.post("/api/gallery-categories", payload);
   return mapCategory(data.category);
 }
 
@@ -44,11 +44,11 @@ export async function updateGalleryCategory(
   id: string,
   payload: UpdateGalleryCategoryPayload,
 ): Promise<GalleryCategory> {
-  const { data } = await api.put(`/gallery-categories/${id}`, payload);
+  const { data } = await api.put(`/api/gallery-categories/${id}`, payload);
   return mapCategory(data.category);
 }
 
 export async function deleteGalleryCategory(id: string): Promise<{ ok: true }> {
-  const { data } = await api.delete(`/gallery-categories/${id}`);
+  const { data } = await api.delete(`/api/gallery-categories/${id}`);
   return data;
 }

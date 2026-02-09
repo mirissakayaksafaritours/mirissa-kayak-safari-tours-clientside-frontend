@@ -8,7 +8,7 @@ type LoginResponse = {
 };
 
 export async function loginAdmin(payload: LoginPayload) {
-  const { data } = await api.post<LoginResponse>("/admin/login", payload);
+  const { data } = await api.post<LoginResponse>("/api/admin/login", payload);
   return data;
 }
 

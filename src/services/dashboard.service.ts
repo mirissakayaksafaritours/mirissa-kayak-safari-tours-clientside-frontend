@@ -25,11 +25,11 @@ const mapStats = (d: any): DashboardStats => ({
 });
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const { data } = await api.get("/dashboard/stats");
+  const { data } = await api.get("/api/dashboard/stats");
   return mapStats(data.stats ?? data);
 }
 
 export async function getDashboardActivity(): Promise<DashboardActivity[]> {
-  const { data } = await api.get("/dashboard/activity");
+  const { data } = await api.get("/api/dashboard/activity");
   return data.activity ?? [];
 }

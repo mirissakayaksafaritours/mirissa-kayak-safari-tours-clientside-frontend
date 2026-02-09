@@ -10,6 +10,6 @@ export type AdminMeResponse = {
 };
 
 export async function getAdminMe() {
-  const { data } = await api.get<AdminMeResponse>("/admin/me");
+  const { data } = await api.get<AdminMeResponse>("/api/admin/me");
   return data.admin;
 }

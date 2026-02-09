@@ -38,13 +38,13 @@ const mapSettings = (s: any): SiteSettings => ({
 });
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-  const { data } = await api.get("/site-settings/admin");
+  const { data } = await api.get("/api/site-settings/admin");
   return mapSettings(data.settings);
 }
 
 export async function updateSiteSettings(
   payload: UpdateSiteSettingsPayload,
 ): Promise<SiteSettings> {
-  const { data } = await api.put("/site-settings", payload);
+  const { data } = await api.put("/api/site-settings", payload);
   return mapSettings(data.settings);
 }

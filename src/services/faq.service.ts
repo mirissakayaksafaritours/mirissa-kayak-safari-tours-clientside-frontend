@@ -12,7 +12,7 @@ export type FAQ = {
 };
 
 export async function getFaqsAdmin(): Promise<FAQ[]> {
-  const { data } = await api.get("/faqs/admin");
+  const { data } = await api.get("/api/faqs/admin");
   return (data.faqs || []).map((f: any) => ({ ...f, id: f._id }));
 }
 
@@ -22,7 +22,7 @@ export async function createFaq(payload: {
   order: number;
   isActive: boolean;
 }) {
-  const { data } = await api.post("/faqs", payload);
+  const { data } = await api.post("/api/faqs", payload);
   return data;
 }
 
@@ -35,11 +35,11 @@ export async function updateFaq(
     isActive: boolean;
   }>,
 ) {
-  const { data } = await api.put(`/faqs/${id}`, payload);
+  const { data } = await api.put(`/api/faqs/${id}`, payload);
   return data;
 }
 
 export async function deleteFaq(id: string) {
-  const { data } = await api.delete(`/faqs/${id}`);
+  const { data } = await api.delete(`/api/faqs/${id}`);
   return data;
 }
