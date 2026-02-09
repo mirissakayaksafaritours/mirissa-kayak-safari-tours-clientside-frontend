@@ -1,4 +1,4 @@
-import { api } from "../lib/api";
+import { api } from "@/lib/api";
 
 type LoginPayload = { email: string; password: string };
 type LoginResponse = {
