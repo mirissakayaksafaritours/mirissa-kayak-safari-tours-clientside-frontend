@@ -15,6 +15,6 @@ const mapCategory = (c: any): GalleryCategory => ({
 });
 
 export async function getGalleryCategories(): Promise<GalleryCategory[]> {
-  const { data } = await api.get("/gallery-categories");
+  const { data } = await api.get("/api/gallery-categories");
   return (data.categories ?? []).map(mapCategory);
 }

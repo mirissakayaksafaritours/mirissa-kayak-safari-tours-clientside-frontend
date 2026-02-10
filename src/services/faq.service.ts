@@ -11,6 +11,6 @@ export type FAQ = {
 };
 
 export const getFaqs = async (): Promise<FAQ[]> => {
-  const res = await api.get("/faqs");
+  const res = await api.get("/api/faqs");
   return res.data.faqs;
 };

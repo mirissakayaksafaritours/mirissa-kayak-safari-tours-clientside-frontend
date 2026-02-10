@@ -19,7 +19,7 @@ const mapGuide = (g: any): Guide => ({
 });
 
 export async function getGuides(): Promise<Guide[]> {
-  const { data } = await api.get("/guides");
+  const { data } = await api.get("/api/guides");
   const list = data.guides ?? data ?? [];
   return list.map(mapGuide);
 }

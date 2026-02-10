@@ -16,6 +16,6 @@ export type SiteSettings = {
 type Res = { ok: boolean; settings: SiteSettings | null };
 
 export async function getSiteSettings() {
-  const { data } = await api.get<Res>("/site-settings");
+  const { data } = await api.get<Res>("/api/site-settings");
   return data.settings;
 }

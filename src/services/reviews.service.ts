@@ -23,14 +23,14 @@ function mapReview(r: any): Reviews {
 }
 
 export async function getReviews(limit = 200): Promise<Reviews[]> {
-  const { data } = await api.get(`/reviews?limit=${limit}`);
+  const { data } = await api.get(`/api/reviews?limit=${limit}`);
 
   const items = Array.isArray(data) ? data : data?.reviews || [];
   return items.map(mapReview);
 }
 
 export async function getTopReviews(limit = 3): Promise<Reviews[]> {
-  const { data } = await api.get(`/reviews?limit=200`);
+  const { data } = await api.get(`/api/reviews?limit=200`);
   const items = Array.isArray(data) ? data : data?.reviews || [];
 
   return items

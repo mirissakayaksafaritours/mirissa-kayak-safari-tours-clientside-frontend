@@ -27,7 +27,7 @@ const mapTour = (t: any): TourPackage => ({
 });
 
 export const getTourPackages = async (): Promise<TourPackage[]> => {
-  const { data } = await api.get("/tour-packages");
+  const { data } = await api.get("/api/tour-packages");
   return (data.tours ?? []).map(mapTour);
 };
 

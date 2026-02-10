@@ -19,7 +19,7 @@ const mapImage = (i: any): GalleryImage => ({
 });
 
 export async function getGalleryImages(categoryId?: string) {
-  const { data } = await api.get("/gallery-images", {
+  const { data } = await api.get("/api/gallery-images", {
     params: categoryId ? { categoryId } : undefined,
   });
   return (data.images ?? []).map(mapImage);
