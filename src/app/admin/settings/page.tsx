@@ -22,14 +22,43 @@ import { Loader } from "@/components/ui/loader";
 export default function SettingsPage() {
   const { showToast } = useToast();
   const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getSiteSettings().then(setSettings);
-  }, []);
+    let mounted = true;
 
-  if (!settings) {
-    return <Loader />;
-  }
+    (async () => {
+      try {
+        const data = await getSiteSettings();
+        if (!mounted) return;
+
+        setSettings({
+          ...data,
+          socialLinks: data.socialLinks ?? {
+            facebook: "",
+            instagram: "",
+            tiktok: "",
+          },
+        });
+      } catch (e: any) {
+        showToast(
+          e?.response?.data?.message || "Failed to load settings",
+          "error",
+        );
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [showToast]);
+
+  if (loading) return <Loader />;
+
+  if (!settings)
+    return <div className="text-sm text-red-500">Failed to load</div>;
 
   const handleChange = (field: keyof SiteSettings | string, value: string) => {
     setSettings((prev) => {
