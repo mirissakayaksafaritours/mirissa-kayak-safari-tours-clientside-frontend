@@ -16,7 +16,7 @@ export default function ToursPage() {
       try {
         const data = await getTourPackages();
         setTours(data);
-      } catch {
+      } catch (error) {
         setTours([]);
       } finally {
         setLoading(false);
@@ -35,30 +35,14 @@ export default function ToursPage() {
     [],
   );
 
-  if (loading) {
-    return (
-      <section className="py-20 px-4 bg-background">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-12 space-y-4">
-            <Skeleton className="h-9 w-72 mx-auto" />
-            <Skeleton className="h-5 w-[520px] mx-auto" />
-          </div>
+  const total = tours.length;
+  const remainder = total % 3;
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-lg border p-4 space-y-3">
-                <Skeleton className="h-40 w-full" />
-                <Skeleton className="h-5 w-[70%]" />
-                <Skeleton className="h-4 w-[50%]" />
-                <Skeleton className="h-4 w-[90%]" />
-                <Skeleton className="h-4 w-[60%]" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const lastRowStart =
+    remainder === 0 ? total : remainder === 1 ? total - 1 : total - 2;
+
+  const mainTours = tours.slice(0, lastRowStart);
+  const lastRowTours = tours.slice(lastRowStart);
 
   return (
     <>
@@ -78,57 +62,60 @@ export default function ToursPage() {
         </section>
 
         {/* Tours Grid */}
-        <section className="py-16 px-4 bg-background">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tours.map((tour, index) => {
-                const total = tours.length;
-                const remainder = total % 3;
+        {loading ? (
+          <section className="py-20 px-4 bg-background">
+            <div className="mx-auto max-w-7xl">
+              <div className="text-center mb-12 space-y-4">
+                <Skeleton className="h-9 w-72 mx-auto" />
+                <Skeleton className="h-5 w-[520px] mx-auto" />
+              </div>
 
-                if (remainder === 1 && index === total - 1) {
-                  return (
-                    <div
-                      key={tour.id}
-                      className="lg:col-span-3 flex justify-center"
-                    >
-                      <div className="w-full max-w-md">
-                        <TourCard {...toTourCardProps(tour)} />
-                      </div>
-                    </div>
-                  );
-                }
-
-                if (remainder === 2 && index === total - 2) {
-                  return (
-                    <div
-                      key="last-two"
-                      className="lg:col-span-3 flex justify-center gap-6"
-                    >
-                      <div className="w-full max-w-md">
-                        <TourCard {...toTourCardProps(tours[total - 2])} />
-                      </div>
-                      <div className="w-full max-w-md">
-                        <TourCard {...toTourCardProps(tours[total - 1])} />
-                      </div>
-                    </div>
-                  );
-                }
-
-                if (remainder === 2 && index === total - 1) {
-                  return null;
-                }
-
-                return (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="rounded-lg border p-4 space-y-3">
+                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="h-5 w-[70%]" />
+                    <Skeleton className="h-4 w-[50%]" />
+                    <Skeleton className="h-4 w-[90%]" />
+                    <Skeleton className="h-4 w-[60%]" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="py-16 px-4 bg-background">
+            <div className="mx-auto max-w-7xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mainTours.map((tour) => (
                   <div key={tour.id} className="flex justify-center">
                     <div className="w-full max-w-md">
                       <TourCard {...toTourCardProps(tour)} />
                     </div>
                   </div>
-                );
-              })}
+                ))}
+
+                {remainder === 1 && lastRowTours[0] && (
+                  <div className="lg:col-span-3 flex justify-center">
+                    <div className="w-full max-w-md">
+                      <TourCard {...toTourCardProps(lastRowTours[0])} />
+                    </div>
+                  </div>
+                )}
+
+                {remainder === 2 && lastRowTours.length === 2 && (
+                  <div className="lg:col-span-3 flex justify-center gap-6">
+                    {lastRowTours.map((tour) => (
+                      <div key={tour.id} className="w-full max-w-md">
+                        <TourCard {...toTourCardProps(tour)} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Booking Info */}
         <section className="py-16 px-4 bg-muted">
