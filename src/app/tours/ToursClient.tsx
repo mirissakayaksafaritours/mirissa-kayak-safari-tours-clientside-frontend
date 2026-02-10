@@ -63,17 +63,12 @@ export default function ToursPage() {
 
         {/* Tours Grid */}
         {loading ? (
-          <section className="py-20 px-4 bg-background">
+          <section className="py-20 px-4 bg-background" aria-busy="true">
             <div className="mx-auto max-w-7xl">
-              <div className="text-center mb-12 space-y-4">
-                <Skeleton className="h-9 w-72 mx-auto" />
-                <Skeleton className="h-5 w-[520px] mx-auto" />
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 3 }).map((_, i) => (
+                {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-lg border p-4 space-y-3">
-                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="aspect-[4/3] w-full" />
                     <Skeleton className="h-5 w-[70%]" />
                     <Skeleton className="h-4 w-[50%]" />
                     <Skeleton className="h-4 w-[90%]" />
