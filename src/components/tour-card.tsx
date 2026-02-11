@@ -33,7 +33,7 @@ export function TourCard({
       <CardHeader className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-card-foreground">{name}</h3>
-          <span className="text-xl font-bold text-primary">{price}</span>
+          {/* <span className="text-xl font-bold text-primary">{price}</span> */}
         </div>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <Clock className="h-4 w-4" />
