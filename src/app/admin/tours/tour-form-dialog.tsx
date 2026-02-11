@@ -61,7 +61,7 @@ export function TourFormDialog({
         slug: tour.slug ?? "",
         shortDescription: tour.shortDescription ?? "",
         duration: tour.duration ?? "",
-        priceLKR: tour.priceLKR ?? 0,
+        priceLKR: 0,
         includes: tour.includes ?? [],
         isFeatured: !!tour.isFeatured,
       });
@@ -103,7 +103,7 @@ export function TourFormDialog({
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.slug || !formData.priceLKR) {
+    if (!formData.title || !formData.slug) {
       showToast("Please fill in all required fields", "error");
       return;
     }
@@ -113,7 +113,7 @@ export function TourFormDialog({
       slug: formData.slug || generateSlug(formData.title),
       shortDescription: formData.shortDescription || "",
       duration: formData.duration,
-      priceLKR: Number(formData.priceLKR) || 0,
+      priceLKR: 0,
       includes: formData.includes ?? [],
       isFeatured: !!formData.isFeatured,
     };
