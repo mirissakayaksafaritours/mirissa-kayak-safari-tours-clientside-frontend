@@ -113,7 +113,7 @@ export function TourFormDialog({
       slug: formData.slug || generateSlug(formData.title),
       shortDescription: formData.shortDescription || "",
       duration: formData.duration,
-      priceLKR: Number(formData.priceLKR),
+      priceLKR: Number(formData.priceLKR) || 0,
       includes: formData.includes ?? [],
       isFeatured: !!formData.isFeatured,
     };
@@ -187,7 +187,7 @@ export function TourFormDialog({
                   className="bg-input border-border"
                 />
               </FormField>
-              <FormField label="Price (LKR)" htmlFor="priceLKR" required>
+              {/* <FormField label="Price (LKR)" htmlFor="priceLKR" required>
                 <Input
                   id="priceLKR"
                   min={0}
@@ -197,7 +197,7 @@ export function TourFormDialog({
                   }
                   className="bg-input border-border"
                 />
-              </FormField>
+              </FormField> */}
             </FormGrid>
           </FormSection>
 

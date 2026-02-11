@@ -79,16 +79,16 @@ export default function ToursPage() {
       header: "Duration",
       sortable: true,
     },
-    {
-      key: "priceLKR",
-      header: "Price (LKR)",
-      sortable: true,
-      render: (tour) => (
-        <span className="text-foreground">
-          Rs. {tour.priceLKR.toLocaleString()}
-        </span>
-      ),
-    },
+    // {
+    //   key: "priceLKR",
+    //   header: "Price (LKR)",
+    //   sortable: true,
+    //   render: (tour) => (
+    //     <span className="text-foreground">
+    //       Rs. {tour.priceLKR.toLocaleString()}
+    //     </span>
+    //   ),
+    // },
     {
       key: "isFeatured",
       header: "Status",
