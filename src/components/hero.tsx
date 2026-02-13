@@ -2,6 +2,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSiteSettings } from "@/context/site-settings-context";
+import { operatingHours } from "@/lib/site-config";
+import { Sunrise, Sun, CloudSun, Sunset } from "lucide-react";
+
+const iconMap = {
+  sunrise: Sunrise,
+  morning: Sun,
+  afternoon: CloudSun,
+  sunset: Sunset,
+};
 
 export function Hero() {
   const { settings } = useSiteSettings();
@@ -52,6 +61,23 @@ export function Hero() {
           >
             <Link href="/tours">View Packages</Link>
           </Button>
+        </div>
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 text-background">
+          {Object.entries(operatingHours).map(([key, value]) => {
+            const Icon = iconMap[key as keyof typeof iconMap] || Sun;
+
+            const label = key.charAt(0).toUpperCase() + key.slice(1);
+
+            return (
+              <div key={key} className="flex flex-col items-center text-center">
+                <Icon className="w-6 h-6 mb-2" />
+                <span className="font-semibold">{label}</span>
+                <span className="text-sm text-background/80">
+                  {value.start} – {value.end}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
