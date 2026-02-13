@@ -26,8 +26,9 @@ export function Hero() {
           Mirissa Kayak Safari Tours
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-background/90 sm:text-xl max-w-2xl mx-auto text-pretty">
-          Explore mangroves, ocean life, and calm waters with experienced local
-          guides. Discover the beauty of Sri Lanka&apos;s southern coast.
+          Explore the calm beauty of our mangrove waterways with guided kayaking
+          tours through lush, untouched nature. Paddle alongside wildlife,
+          discover hidden lagoons, and experience serenity like never before.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button size="lg" asChild>
