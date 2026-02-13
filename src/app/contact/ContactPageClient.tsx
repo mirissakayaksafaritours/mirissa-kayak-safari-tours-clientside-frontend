@@ -183,36 +183,25 @@ export default function ContactPage() {
             </h2>
 
             <div className="bg-card rounded-lg p-6 space-y-3">
-              {[
-                {
-                  label: "Daily Tours",
-                  value: `${operatingHours.dailyTours.start} - ${operatingHours.dailyTours.end}`,
-                },
-                {
-                  label: "Sunrise Tours",
-                  value: `${operatingHours.sunriseTours.start} - ${operatingHours.sunriseTours.end}`,
-                },
-                {
-                  label: "Sunset Tours",
-                  value: `${operatingHours.sunsetTours.start} - ${operatingHours.sunsetTours.end}`,
-                },
-                {
-                  label: "Best Season",
-                  value: `${operatingHours.bestSeason.from} - ${operatingHours.bestSeason.to}`,
-                },
-              ].map(({ label, value }, i) => (
-                <div
-                  key={label}
-                  className={`flex justify-between items-center py-2 ${
-                    i !== 3 ? "border-b border-border" : ""
-                  }`}
-                >
-                  <span className="text-card-foreground font-medium">
-                    {label}
-                  </span>
-                  <span className="text-muted-foreground">{value}</span>
-                </div>
-              ))}
+              {Object.entries(operatingHours).map(([key, value], i, arr) => {
+                const label = key.charAt(0).toUpperCase() + key.slice(1);
+
+                return (
+                  <div
+                    key={key}
+                    className={`flex justify-between items-center py-2 ${
+                      i !== arr.length - 1 ? "border-b border-border" : ""
+                    }`}
+                  >
+                    <span className="text-card-foreground font-medium">
+                      {label} Tour
+                    </span>
+                    <span className="text-muted-foreground">
+                      {value.start} – {value.end}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
 
             <p className="mt-4 text-sm text-muted-foreground">
