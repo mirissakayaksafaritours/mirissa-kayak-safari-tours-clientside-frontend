@@ -44,15 +44,19 @@ export async function getTourPackagesAdmin(): Promise<TourPackage[]> {
   return (data.tours ?? []).map(mapTour);
 }
 
-export async function presignTourImageUpload(payload: {
-  fileName: string;
-  contentType: string;
-}): Promise<{ uploadUrl: string; key: string; publicUrl: string }> {
-  const { data } = await api.post(
-    "/api/tour-packages/admin/upload-url",
-    payload,
-  );
-  return data;
+export async function uploadTourImage(file: File): Promise<string> {
+  const { uploadUrl, publicUrl } = await api
+    .post("/api/tour-packages/admin/upload-url", {
+      fileName: file.name,
+      contentType: file.type,
+    })
+    .then((res) => res.data);
+
+  await api.put(uploadUrl, file, {
+    headers: { "Content-Type": file.type },
+  });
+
+  return publicUrl;
 }
 
 export async function createTourPackage(

@@ -21,7 +21,7 @@ import {
 import { useToast } from "@/components/admin/toast-provider";
 import {
   createTourPackage,
-  presignTourImageUpload,
+  uploadTourImage,
   updateTourPackage,
   type TourPackage,
   type TourPackagePayload,
@@ -109,6 +109,34 @@ export function TourFormDialog({
     );
   };
 
+  const handleUploaderChange = async (
+    files?: UploadedImage | UploadedImage[],
+  ) => {
+    if (!files) {
+      handleChange("images", []);
+      return;
+    }
+
+    const arr = Array.isArray(files) ? files : [files];
+    const newUrls: string[] = [];
+
+    for (const item of arr) {
+      if ("file" in item && item.file instanceof File) {
+        try {
+          const url = await uploadTourImage(item.file);
+          newUrls.push(url);
+        } catch (err) {
+          showToast("Image upload failed", "error");
+          console.error(err);
+        }
+      } else if ("url" in item) {
+        newUrls.push(item.url);
+      }
+    }
+
+    handleChange("images", newUrls);
+  };
+
   const handleSubmit = async () => {
     if (!formData.title || !formData.slug || !formData.images.length) {
       showToast("Please fill in all required fields", "error");
@@ -153,23 +181,8 @@ export function TourFormDialog({
           <FormSection title="Basic Information">
             <FormField label="Image" required>
               <ImageUploader
-                value={
-                  formData.images[0]
-                    ? [{ url: formData.images[0], key: "" }]
-                    : []
-                }
-                onChange={(v: UploadedImage[] | UploadedImage | undefined) => {
-                  if (!v || (Array.isArray(v) && v.length === 0)) {
-                    handleChange("images", []);
-                    return;
-                  }
-
-                  const arr = Array.isArray(v) ? v : [v];
-                  handleChange(
-                    "images",
-                    arr.map((img) => img.url),
-                  );
-                }}
+                value={formData.images.map((url) => ({ url, key: "" }))}
+                onChange={handleUploaderChange}
               />
             </FormField>
 
