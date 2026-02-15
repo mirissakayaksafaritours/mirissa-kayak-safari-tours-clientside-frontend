@@ -9,7 +9,7 @@ export type TourPackage = {
   priceLKR: number;
   includes: string[];
   isFeatured: boolean;
-  imageUrl?: string;
+  images?: string[];
   createdAt?: string;
   updatedAt?: string;
 };
@@ -23,7 +23,7 @@ const mapTour = (t: any): TourPackage => ({
   priceLKR: Number(t.priceLKR ?? 0),
   includes: t.includes ?? [],
   isFeatured: !!t.isFeatured,
-  imageUrl: t.imageUrl,
+  images: t.images ?? [],
   createdAt: t.createdAt,
   updatedAt: t.updatedAt,
 });

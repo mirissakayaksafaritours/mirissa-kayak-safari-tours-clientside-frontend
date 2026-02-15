@@ -71,7 +71,7 @@ export function FeaturedTours() {
               price={`Rs. ${tour.priceLKR.toLocaleString()}`}
               description={tour.shortDescription ?? ""}
               highlights={tour.includes ?? []}
-              image={tour.imageUrl}
+              image={tour.images?.[0]}
             />
           ))}
         </div>
