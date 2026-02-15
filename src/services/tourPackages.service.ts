@@ -9,6 +9,7 @@ export type TourPackage = {
   priceLKR: number;
   includes: string[];
   isFeatured: boolean;
+  images?: string[];
   createdAt?: string;
   updatedAt?: string;
 };
@@ -20,6 +21,7 @@ export type TourPackagePayload = {
   duration: string;
   priceLKR: number;
   includes?: string[];
+  images?: string[];
   isFeatured?: boolean;
 };
 
@@ -32,6 +34,7 @@ const mapTour = (t: any): TourPackage => ({
   priceLKR: Number(t.priceLKR ?? 0),
   includes: t.includes ?? [],
   isFeatured: !!t.isFeatured,
+  images: t.images ?? [],
   createdAt: t.createdAt,
   updatedAt: t.updatedAt,
 });
@@ -39,6 +42,17 @@ const mapTour = (t: any): TourPackage => ({
 export async function getTourPackagesAdmin(): Promise<TourPackage[]> {
   const { data } = await api.get("/api/tour-packages/admin/all");
   return (data.tours ?? []).map(mapTour);
+}
+
+export async function presignTourImageUpload(payload: {
+  fileName: string;
+  contentType: string;
+}): Promise<{ uploadUrl: string; key: string; publicUrl: string }> {
+  const { data } = await api.post(
+    "/api/tour-packages/admin/upload-url",
+    payload,
+  );
+  return data;
 }
 
 export async function createTourPackage(

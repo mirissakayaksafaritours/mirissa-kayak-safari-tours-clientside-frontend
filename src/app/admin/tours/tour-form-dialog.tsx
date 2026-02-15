@@ -26,6 +26,10 @@ import {
   type TourPackagePayload,
 } from "@/services/tourPackages.service";
 import { X, Plus } from "lucide-react";
+import {
+  ImageUploader,
+  type UploadedImage,
+} from "@/components/admin/image-uploader";
 
 interface TourFormDialogProps {
   open: boolean;
@@ -41,6 +45,7 @@ const initialFormData = {
   duration: "",
   priceLKR: 0,
   includes: [] as string[],
+  images: [] as string[],
   isFeatured: false,
 };
 
@@ -61,8 +66,9 @@ export function TourFormDialog({
         slug: tour.slug ?? "",
         shortDescription: tour.shortDescription ?? "",
         duration: tour.duration ?? "",
-        priceLKR: 0,
+        priceLKR: Number(tour.priceLKR ?? 0),
         includes: tour.includes ?? [],
+        images: tour.images ?? [],
         isFeatured: !!tour.isFeatured,
       });
     } else {
@@ -103,7 +109,7 @@ export function TourFormDialog({
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.slug) {
+    if (!formData.title || !formData.slug || !formData.images.length) {
       showToast("Please fill in all required fields", "error");
       return;
     }
@@ -115,6 +121,7 @@ export function TourFormDialog({
       duration: formData.duration,
       priceLKR: 0,
       includes: formData.includes ?? [],
+      images: formData.images,
       isFeatured: !!formData.isFeatured,
     };
 
@@ -143,6 +150,29 @@ export function TourFormDialog({
 
         <div className="space-y-6 py-4">
           <FormSection title="Basic Information">
+            <FormField label="Image" required>
+              <ImageUploader
+                value={
+                  formData.images?.[0]
+                    ? {
+                        url: formData.images[0],
+                        key: "",
+                      }
+                    : undefined
+                }
+                onChange={(v) => {
+                  const img = Array.isArray(v) ? v?.[0] : v;
+
+                  if (!img) {
+                    handleChange("images", []);
+                    return;
+                  }
+
+                  handleChange("images", [img.url]);
+                }}
+              />
+            </FormField>
+
             <FormGrid columns={2}>
               <FormField label="Title" htmlFor="title" required>
                 <Input
