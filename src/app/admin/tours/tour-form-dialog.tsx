@@ -21,6 +21,7 @@ import {
 import { useToast } from "@/components/admin/toast-provider";
 import {
   createTourPackage,
+  presignTourImageUpload,
   updateTourPackage,
   type TourPackage,
   type TourPackagePayload,
@@ -153,22 +154,21 @@ export function TourFormDialog({
             <FormField label="Image" required>
               <ImageUploader
                 value={
-                  formData.images?.[0]
-                    ? {
-                        url: formData.images[0],
-                        key: "",
-                      }
-                    : undefined
+                  formData.images[0]
+                    ? [{ url: formData.images[0], key: "" }]
+                    : []
                 }
-                onChange={(v) => {
-                  const img = Array.isArray(v) ? v?.[0] : v;
-
-                  if (!img) {
+                onChange={(v: UploadedImage[] | UploadedImage | undefined) => {
+                  if (!v || (Array.isArray(v) && v.length === 0)) {
                     handleChange("images", []);
                     return;
                   }
 
-                  handleChange("images", [img.url]);
+                  const arr = Array.isArray(v) ? v : [v];
+                  handleChange(
+                    "images",
+                    arr.map((img) => img.url),
+                  );
                 }}
               />
             </FormField>
