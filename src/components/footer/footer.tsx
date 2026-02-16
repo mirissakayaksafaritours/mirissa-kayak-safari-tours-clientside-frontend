@@ -151,17 +151,19 @@ export function Footer() {
             </h4>
 
             <ul className="space-y-2 text-sm text-background/70">
-              <li>
-                Daily: {operatingHours.dailyTours.start} –{" "}
-                {operatingHours.dailyTours.end}
-              </li>
-              <li>Sunrise Tours: {operatingHours.sunriseTours.start}</li>
-              <li>Sunset Tours: {operatingHours.sunsetTours.start}</li>
+              {Object.entries(operatingHours).map(([key, value]) => {
+                const label = key.charAt(0).toUpperCase() + key.slice(1);
+
+                return (
+                  <li key={key}>
+                    {label}: {value.start} – {value.end}
+                  </li>
+                );
+              })}
             </ul>
 
             <p className="text-xs text-background/50">
-              Tours available year-round. Best conditions{" "}
-              {operatingHours.bestSeason.from} – {operatingHours.bestSeason.to}.
+              Tours available year-round.
             </p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { Clock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ interface TourCardProps {
   price: string;
   description: string;
   highlights: string[];
+  image?: string;
 }
 
 export function TourCard({
@@ -23,13 +25,20 @@ export function TourCard({
   price,
   description,
   highlights,
+  image,
 }: TourCardProps) {
   const { settings } = useSiteSettings();
 
   const waNumber = (settings?.whatsappNumber || "").replace(/[^0-9]/g, "");
 
   return (
-    <Card className={"flex flex-col h-full w-full max-w-md mx-auto"}>
+    <Card className="flex flex-col h-full w-full max-w-md mx-auto overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      {image && (
+        <div className="relative w-full h-56">
+          <Image src={image} alt={name} fill className="object-cover" />
+        </div>
+      )}
+
       <CardHeader className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-card-foreground">{name}</h3>

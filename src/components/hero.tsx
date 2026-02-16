@@ -2,6 +2,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSiteSettings } from "@/context/site-settings-context";
+import { operatingHours } from "@/lib/site-config";
+import { Sunrise, Sun, CloudSun, Sunset } from "lucide-react";
+
+const iconMap = {
+  sunrise: Sunrise,
+  morning: Sun,
+  afternoon: CloudSun,
+  sunset: Sunset,
+};
 
 export function Hero() {
   const { settings } = useSiteSettings();
@@ -26,8 +35,9 @@ export function Hero() {
           Mirissa Kayak Safari Tours
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-background/90 sm:text-xl max-w-2xl mx-auto text-pretty">
-          Explore mangroves, ocean life, and calm waters with experienced local
-          guides. Discover the beauty of Sri Lanka&apos;s southern coast.
+          Explore the calm beauty of our mangrove waterways with guided kayaking
+          tours through lush, untouched nature. Paddle alongside wildlife,
+          discover hidden lagoons, and experience serenity like never before.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button size="lg" asChild>
@@ -51,6 +61,23 @@ export function Hero() {
           >
             <Link href="/tours">View Packages</Link>
           </Button>
+        </div>
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 text-background">
+          {Object.entries(operatingHours).map(([key, value]) => {
+            const Icon = iconMap[key as keyof typeof iconMap] || Sun;
+
+            const label = key.charAt(0).toUpperCase() + key.slice(1);
+
+            return (
+              <div key={key} className="flex flex-col items-center text-center">
+                <Icon className="w-6 h-6 mb-2" />
+                <span className="font-semibold">{label}</span>
+                <span className="text-sm text-background/80">
+                  {value.start} – {value.end}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

@@ -15,18 +15,18 @@ export const siteConfig = {
 };
 
 export const operatingHours = {
-  dailyTours: { start: "6:00 AM", end: "6:00 PM" },
-  sunriseTours: { start: "6:00 AM", end: "8:00 AM" },
-  sunsetTours: { start: "4:30 PM", end: "6:00 PM" },
-  bestSeason: { from: "November", to: "April" },
+  sunrise: { start: "6:00 AM", end: "8:00 AM" },
+  morning: { start: "8:30 AM", end: "10:00 AM" },
+  afternoon: { start: "2:30 PM", end: "4:00 PM" },
+  sunset: { start: "4:30 PM", end: "6:30 PM" },
 };
 
 export const weeklySchedule = [
-  { day: "Monday", hours: "6:00 AM – 6:00 PM" },
-  { day: "Tuesday", hours: "6:00 AM – 6:00 PM" },
-  { day: "Wednesday", hours: "6:00 AM – 6:00 PM" },
-  { day: "Thursday", hours: "6:00 AM – 6:00 PM" },
-  { day: "Friday", hours: "6:00 AM – 6:00 PM" },
-  { day: "Saturday", hours: "6:00 AM – 6:00 PM" },
-  { day: "Sunday", hours: "6:00 AM – 6:00 PM" },
+  { day: "Monday", hours: "6:00 AM – 6:30 PM" },
+  { day: "Tuesday", hours: "6:00 AM – 6:30 PM" },
+  { day: "Wednesday", hours: "6:00 AM – 6:30 PM" },
+  { day: "Thursday", hours: "6:00 AM – 6:30 PM" },
+  { day: "Friday", hours: "6:00 AM – 6:30 PM" },
+  { day: "Saturday", hours: "6:00 AM – 6:30 PM" },
+  { day: "Sunday", hours: "6:00 AM – 6:30 PM" },
 ];
