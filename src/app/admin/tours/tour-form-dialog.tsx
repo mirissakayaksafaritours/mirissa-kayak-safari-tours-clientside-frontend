@@ -46,7 +46,7 @@ const initialFormData = {
   duration: "",
   priceLKR: 0,
   includes: [] as string[],
-  images: [] as string[],
+  image: "",
   isFeatured: false,
 };
 
@@ -60,13 +60,6 @@ export function TourFormDialog({
   const [formData, setFormData] = useState(initialFormData);
   const [newInclude, setNewInclude] = useState("");
 
-  /** Safely convert backend `images` (string | string[] | undefined) → string[] */
-  const toImagesArray = (raw: string | string[] | undefined): string[] => {
-    if (Array.isArray(raw)) return raw.filter(Boolean);
-    if (typeof raw === "string" && raw.length > 0) return [raw];
-    return [];
-  };
-
   useEffect(() => {
     if (tour) {
       setFormData({
@@ -76,7 +69,7 @@ export function TourFormDialog({
         duration: tour.duration ?? "",
         priceLKR: Number(tour.priceLKR ?? 0),
         includes: Array.isArray(tour.includes) ? tour.includes : [],
-        images: toImagesArray(tour.images as any),
+        image: tour.image ?? "",
         isFeatured: !!tour.isFeatured,
       });
     } else {
@@ -120,16 +113,16 @@ export function TourFormDialog({
     files?: UploadedImage | UploadedImage[],
   ) => {
     if (!files) {
-      handleChange("images", []);
+      handleChange("image", "");
       return;
     }
 
     const arr = Array.isArray(files) ? files : [files];
-    handleChange("images", arr.map((item) => item.url));
+    handleChange("image", arr.map((item) => item.url));
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.slug || !formData.images.length) {
+    if (!formData.title || !formData.slug || !formData.image) {
       showToast("Please fill in all required fields", "error");
       return;
     }
@@ -141,7 +134,7 @@ export function TourFormDialog({
       duration: formData.duration,
       priceLKR: 0,
       includes: formData.includes ?? [],
-      images: formData.images,
+      image: formData.image,
       isFeatured: !!formData.isFeatured,
     };
 
@@ -172,8 +165,14 @@ export function TourFormDialog({
           <FormSection title="Basic Information">
             <FormField label="Image" required>
               <ImageUploader
-                value={(Array.isArray(formData.images) ? formData.images : []).filter(Boolean).map((url) => ({ url, key: "" }))}
-                onChange={handleUploaderChange}
+                value={
+                  formData.image
+                    ? { url: formData.image, key: "" }
+                    : undefined
+                }
+                onChange={(file) =>
+                  handleChange("image", (file as UploadedImage)?.url || "")
+                }
                 presignFn={presignTourImageUpload}
               />
             </FormField>

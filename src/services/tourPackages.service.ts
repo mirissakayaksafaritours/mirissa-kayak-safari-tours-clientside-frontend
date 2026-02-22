@@ -9,7 +9,7 @@ export type TourPackage = {
   priceLKR: number;
   includes: string[];
   isFeatured: boolean;
-  images?: string[];
+  image?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -21,15 +21,14 @@ export type TourPackagePayload = {
   duration: string;
   priceLKR: number;
   includes?: string[];
-  images?: string[];
+  image?: string;
   isFeatured?: boolean;
 };
 
-/** Normalise `images` to always be string[], regardless of backend shape */
-const normaliseImages = (raw: unknown): string[] => {
-  if (Array.isArray(raw)) return raw.filter(Boolean) as string[];
-  if (typeof raw === "string" && raw.length > 0) return [raw];
-  return [];
+const normaliseImage = (raw: unknown): string => {
+  if (typeof raw === "string") return raw;
+  if (Array.isArray(raw) && raw.length > 0) return raw[0];
+  return "";
 };
 
 const mapTour = (t: any): TourPackage => ({
@@ -41,7 +40,7 @@ const mapTour = (t: any): TourPackage => ({
   priceLKR: Number(t.priceLKR ?? 0),
   includes: Array.isArray(t.includes) ? t.includes : [],
   isFeatured: !!t.isFeatured,
-  images: normaliseImages(t.images),
+  image: normaliseImage(t.image),
   createdAt: t.createdAt,
   updatedAt: t.updatedAt,
 });
