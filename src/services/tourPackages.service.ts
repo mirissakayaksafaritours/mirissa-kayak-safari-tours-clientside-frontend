@@ -25,6 +25,13 @@ export type TourPackagePayload = {
   isFeatured?: boolean;
 };
 
+/** Normalise `images` to always be string[], regardless of backend shape */
+const normaliseImages = (raw: unknown): string[] => {
+  if (Array.isArray(raw)) return raw.filter(Boolean) as string[];
+  if (typeof raw === "string" && raw.length > 0) return [raw];
+  return [];
+};
+
 const mapTour = (t: any): TourPackage => ({
   id: t._id,
   title: t.title,
@@ -32,9 +39,9 @@ const mapTour = (t: any): TourPackage => ({
   shortDescription: t.shortDescription ?? "",
   duration: t.duration,
   priceLKR: Number(t.priceLKR ?? 0),
-  includes: t.includes ?? [],
+  includes: Array.isArray(t.includes) ? t.includes : [],
   isFeatured: !!t.isFeatured,
-  images: t.images ?? [],
+  images: normaliseImages(t.images),
   createdAt: t.createdAt,
   updatedAt: t.updatedAt,
 });

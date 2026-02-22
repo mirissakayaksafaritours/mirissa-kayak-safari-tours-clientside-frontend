@@ -60,6 +60,13 @@ export function TourFormDialog({
   const [formData, setFormData] = useState(initialFormData);
   const [newInclude, setNewInclude] = useState("");
 
+  /** Safely convert backend `images` (string | string[] | undefined) → string[] */
+  const toImagesArray = (raw: string | string[] | undefined): string[] => {
+    if (Array.isArray(raw)) return raw.filter(Boolean);
+    if (typeof raw === "string" && raw.length > 0) return [raw];
+    return [];
+  };
+
   useEffect(() => {
     if (tour) {
       setFormData({
@@ -68,8 +75,8 @@ export function TourFormDialog({
         shortDescription: tour.shortDescription ?? "",
         duration: tour.duration ?? "",
         priceLKR: Number(tour.priceLKR ?? 0),
-        includes: tour.includes ?? [],
-        images: tour.images ?? [],
+        includes: Array.isArray(tour.includes) ? tour.includes : [],
+        images: toImagesArray(tour.images as any),
         isFeatured: !!tour.isFeatured,
       });
     } else {
@@ -165,7 +172,7 @@ export function TourFormDialog({
           <FormSection title="Basic Information">
             <FormField label="Image" required>
               <ImageUploader
-                value={formData.images.map((url) => ({ url, key: "" }))}
+                value={(Array.isArray(formData.images) ? formData.images : []).filter(Boolean).map((url) => ({ url, key: "" }))}
                 onChange={handleUploaderChange}
                 presignFn={presignTourImageUpload}
               />
