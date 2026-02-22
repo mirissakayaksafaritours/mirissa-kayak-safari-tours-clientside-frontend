@@ -31,7 +31,7 @@ export default function ToursPage() {
       price: `Rs. ${t.priceLKR.toLocaleString()}`,
       description: t.shortDescription ?? "",
       highlights: t.includes ?? [],
-      image: t.images?.[0],
+      image: t.image || "",
     }),
     [],
   );
