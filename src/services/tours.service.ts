@@ -9,7 +9,7 @@ export type TourPackage = {
   priceLKR: number;
   includes: string[];
   isFeatured: boolean;
-  images?: string[];
+  image?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -21,9 +21,9 @@ const mapTour = (t: any): TourPackage => ({
   shortDescription: t.shortDescription ?? "",
   duration: t.duration,
   priceLKR: Number(t.priceLKR ?? 0),
-  includes: t.includes ?? [],
+  includes: Array.isArray(t.includes) ? t.includes : [],
   isFeatured: !!t.isFeatured,
-  images: t.images ?? [],
+  image: typeof t.image === "string" ? t.image : "",
   createdAt: t.createdAt,
   updatedAt: t.updatedAt,
 });
@@ -33,7 +33,7 @@ export const getTourPackages = async (): Promise<TourPackage[]> => {
   return (data.tours ?? []).map(mapTour);
 };
 
-export const getFeaturedTours = async () => {
+export const getFeaturedTours = async (): Promise<TourPackage[]> => {
   const tours = await getTourPackages();
   return tours.filter((t) => t.isFeatured).slice(0, 3);
 };
