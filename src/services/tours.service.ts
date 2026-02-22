@@ -23,7 +23,11 @@ const mapTour = (t: any): TourPackage => ({
   priceLKR: Number(t.priceLKR ?? 0),
   includes: t.includes ?? [],
   isFeatured: !!t.isFeatured,
-  images: t.images ?? [],
+  images: Array.isArray(t.images)
+    ? t.images
+    : t.image
+      ? [t.image]
+      : [],
   createdAt: t.createdAt,
   updatedAt: t.updatedAt,
 });
