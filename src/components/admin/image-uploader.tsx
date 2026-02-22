@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { presignGalleryImageUpload } from "@/services/galleryImage.service";
 
+export type PresignFn = (payload: {
+  fileName: string;
+  contentType: string;
+}) => Promise<{ uploadUrl: string; key: string; publicUrl: string }>;
+
 export type UploadedImage = { url: string; key: string };
 
 interface ImageUploaderProps {
@@ -13,10 +18,15 @@ interface ImageUploaderProps {
   onChange: (value?: UploadedImage | UploadedImage[]) => void;
   multiple?: boolean;
   className?: string;
+  /** Optional custom presign function. Defaults to the gallery presign endpoint. */
+  presignFn?: PresignFn;
 }
 
-async function uploadToS3(file: File): Promise<UploadedImage> {
-  const presign = await presignGalleryImageUpload({
+async function uploadToS3(
+  file: File,
+  presignFn: PresignFn,
+): Promise<UploadedImage> {
+  const presign = await presignFn({
     fileName: file.name,
     contentType: file.type || "image/jpeg",
   });
@@ -37,6 +47,7 @@ export function ImageUploader({
   onChange,
   multiple = false,
   className,
+  presignFn = presignGalleryImageUpload,
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -63,7 +74,7 @@ export function ImageUploader({
       setIsUploading(true);
       try {
         const uploaded = await Promise.all(
-          valid.map((file) => uploadToS3(file)),
+          valid.map((file) => uploadToS3(file, presignFn)),
         );
 
         if (multiple) {

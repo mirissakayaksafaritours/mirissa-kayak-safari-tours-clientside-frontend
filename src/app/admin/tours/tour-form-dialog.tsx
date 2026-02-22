@@ -21,7 +21,7 @@ import {
 import { useToast } from "@/components/admin/toast-provider";
 import {
   createTourPackage,
-  uploadTourImage,
+  presignTourImageUpload,
   updateTourPackage,
   type TourPackage,
   type TourPackagePayload,
@@ -109,7 +109,7 @@ export function TourFormDialog({
     );
   };
 
-  const handleUploaderChange = async (
+  const handleUploaderChange = (
     files?: UploadedImage | UploadedImage[],
   ) => {
     if (!files) {
@@ -118,23 +118,7 @@ export function TourFormDialog({
     }
 
     const arr = Array.isArray(files) ? files : [files];
-    const newUrls: string[] = [];
-
-    for (const item of arr) {
-      if ("file" in item && item.file instanceof File) {
-        try {
-          const url = await uploadTourImage(item.file);
-          newUrls.push(url);
-        } catch (err) {
-          showToast("Image upload failed", "error");
-          console.error(err);
-        }
-      } else if ("url" in item) {
-        newUrls.push(item.url);
-      }
-    }
-
-    handleChange("images", newUrls);
+    handleChange("images", arr.map((item) => item.url));
   };
 
   const handleSubmit = async () => {
@@ -183,6 +167,7 @@ export function TourFormDialog({
               <ImageUploader
                 value={formData.images.map((url) => ({ url, key: "" }))}
                 onChange={handleUploaderChange}
+                presignFn={presignTourImageUpload}
               />
             </FormField>
 
