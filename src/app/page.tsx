@@ -7,6 +7,7 @@ import { FAQAccordion } from "@/components/faq-accordion";
 import { OperatingHours } from "@/components/operating-hours";
 import { HomeMapSection } from "@/components/home-map-section";
 import { Reviews } from "@/components/reviews";
+import { WildlifeSection } from "@/components/wildlife-section";
 
 export default function Home() {
   return (
@@ -14,12 +15,13 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <FeaturedTours />
-        <WhyChooseUs />
-        <FAQAccordion />
         <OperatingHours />
+        <WhyChooseUs />
+        <FeaturedTours />
+        <WildlifeSection />
         <HomeMapSection />
         <Reviews />
+        <FAQAccordion />
       </main>
       <Footer />
     </>
